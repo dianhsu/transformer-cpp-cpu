@@ -1,6 +1,10 @@
 #include "dropout.h"
 
 template<typename T, int DIM>
+Dropout::Dropout() {
+    this->dropout_rate = 0.1;
+}
+template<typename T, int DIM>
 void Dropout::load_params(T dropout_rate) {
     this->dropout_rate = dropout_rate;
 }

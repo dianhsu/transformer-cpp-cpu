@@ -1,9 +1,21 @@
-#include "normlayer.h"
+#include "norm.h"
 
 template<typename T, int DIM>
-void LayerNorm::load_params(T weight[DIM], T bias[DIM]) {
-    memcpy(this->weight, weight, sizeof(weight));
-    memcpy(this->bias, bias, sizeof(bias));
+LayerNorm::LayerNorm() {
+    params = new LayerNormParams<T, DIM>();
+}
+
+template<typename T, int DIM>
+~LayerNorm::LayerNorm() {
+    delete params;
+}
+
+template<typename T, int DIM>
+void LayerNorm::load_params(LayerNormParam<T, DIM> *p) {
+    if(p != nullptr){
+        memcpy(this->params->weights, p->weights, sizeof(T)*DIM);
+        memcpy(this->params->bias, p->bias, sizeof(T)*DIM);
+    }
 }
 template<typename T, int DIM>
 void LayerNorm::forward(T input[DIM], T output[DIM]) {
@@ -18,6 +30,6 @@ void LayerNorm::forward(T input[DIM], T output[DIM]) {
     T var = avg2 - avg * avg;
     T sq_var = sqrt(var + 1e-5);
     for(int i = 0; i < DIM; ++i) {
-        output[i] = (input[i] - avg)/sq_var * weight[i] + bias[i];
+        output[i] = (input[i] - avg)/sq_var * params->weights[i] + params->bias[i];
     }
 }

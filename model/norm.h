@@ -4,12 +4,17 @@
 #include <cstring>
 
 template<typename T, int DIM>
+struct LayerNormParams {
+    T weights[DIM];
+    T bias[DIM];
+};
+
+template<typename T, int DIM>
 class LayerNorm {
 public:
-    void load_params(T weight[DIM], T bias[DIM]) {
-        memcpy(this->weight, weight, sizeof(weight));
-        memcpy(this->bias, bias, sizeof(bias));
-    }
+    LayerNorm();
+    ~LayerNorm();
+    void load_params(LayerNormParam<T, DIM> *p);
     void forward(T input[DIM], T output[DIM]) {
         T sum = 0;
         T sum2 = 0;
@@ -22,13 +27,13 @@ public:
         T var = avg2 - avg * avg;
         T sq_var = sqrt(var + 1e-5);
         for(int i = 0; i < DIM; ++i) {
-            output[i] = (input[i] - avg)/sq_var * weight[i] + bias[i];
+            output[i] = (input[i] - avg)/sq_var * (params->weight[i]) + (params->bias[i]);
         }
     }
 private:
-    T weight[DIM];
-    T bias[DIM];
+    LayerNormParams<T, DIM> *params;
 
 };
+
 
 #endif

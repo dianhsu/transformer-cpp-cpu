@@ -1,7 +1,7 @@
 #include "attention.h"
 #include "function.h"
 
-template<typename T, int DIM, int H>
+template<typename T, int DIM, int DEP, int H>
 MultiHeadAttention::MultiHeadAttention() {
     for(int i = 0; i < H; ++i) {
         linear_q[i] = new Linear<T, DIM, DIM>();
@@ -12,24 +12,30 @@ MultiHeadAttention::MultiHeadAttention() {
     dropout = new Dropout<T, DIM>();
     this->head_size = head_size;
     this->scale = 1.0 / sqrt((DIM / H) * 1.0);
+    mha_p = new MultiHeadAttentionParams<T, DIM, DEP, H>();
 }
-template<typename T, int DIM, int H>
-void MultiHeadAttention::load_params(T weights_q[H][DIM][DIM],
-                                     T weights_k[H][DIM][DIM],
-                                     T weights_v[H][DIM][DIM],
-                                     T weights2[DEP*H][DIM],
-                                     T bias_q[H][DIM],
-                                     T bias_k[H][DIM],
-                                     T bias_v[H][DIM],
-                                     T bia2[DIM]) {
+template<typename T, int DIM, int DEP, int H>
+void MultiHeadAttention::load_params(MultiHeadAttentionParam<T, DIM, DEP, H>* p) {
     for(int i = 0; i < H; ++i) {
-        linear_q[i].load_params(weights_q[i], bias_q[i]);
-        linear_k[i].load_params(weights_k[i], bias_k[i]);
-        linear_v[i].load_params(weights_v[i], bias_v[i]);
+        if(p->linear_q_p[i] != nullptr) {
+            linear_q[i]->load_params(p->linear_q_p[i]);
+
+        }
+        if(p->linear_k_p[i] != nullptr) {
+            linear_k[i]->load_params(p->linear_k_p[i]);
+        }
+        if(p->linear_v_p[i] != nullptr) {
+            linear_v[i]->load_params(p->linear_v_p[i]);
+        }
     }
-    linear.load_params(weight2, bias2);
+    if(p->linear_p != nullptr) {
+        linear->load_params(p->linear_p);
+    }
+    if(p->dropout_rate != nullptr){
+        dropout->load_params(*(p->dropout_rate));
+    }
 }
-template<typename T, int DIM, int H>
+template<typename T, int DIM, int DEP, int H>
 void MultiHeadAttention::forward(T q_in[DEP][DIM], T k_in[DEP][DIM], T v_in[DEP][DIM], T output[DEP][DIM]) {
     T q_tmp[H][DEP][DIM], k_tmp[H][DEP][DIM], v_tmp[H][DEP][DIM];
     for(int i = 0; i < H; ++i) {
@@ -40,7 +46,6 @@ void MultiHeadAttention::forward(T q_in[DEP][DIM], T k_in[DEP][DIM], T v_in[DEP]
             dropout->forward(q_tmp[i][j]);
             dropout->forward(k_tmp[i][j]);
             dropout->forward(v_tmp[i][j]);
-
             for(int k = 0; k < DIM; ++k) {
                 q_tmp[i][j][k] *= this->scale;
             }
