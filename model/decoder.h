@@ -15,7 +15,7 @@ struct DecoderParam{
     }
     ~DecoderParam(){
         delete[] layers_p;
-        delete norm;
+        delete norm_p;
     }
 };
 

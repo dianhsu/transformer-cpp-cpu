@@ -13,6 +13,10 @@ struct TransformerParam{
         encoder_p = new EncoderParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT>();
         decoder_p = new DecoderParam<T, DIM, D_H, HEAD_SIZE, DEC_LAYER_CNT>();
     }
+    ~TransformerParam(){
+        delete encoder_p;
+        delete decoder_p;
+    }
 };
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int ENC_LAYER_CNT, int DEC_LAYER_CNT>
 class Transformer{
