@@ -1,4 +1,7 @@
 #include "attention.h"
+
+#include <cmath>
+
 #include "function.h"
 
 template<typename T, int DIM, int DEP, int H>
@@ -10,7 +13,6 @@ MultiHeadAttention<T, DIM, DEP, H>::MultiHeadAttention() {
     }
     linear = new Linear<T, DIM*H, DIM>();
     dropout = new Dropout<T, DIM>();
-    this->head_size = head_size;
     this->scale = 1.0 / sqrt((DIM / H) * 1.0);
 }
 template<typename T, int DIM, int DEP, int H>
