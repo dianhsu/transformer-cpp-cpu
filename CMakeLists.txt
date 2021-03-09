@@ -1,13 +1,10 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.17)
 
 project(Transformer)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/output)
-set(CMAKE_CXX_FLAGS "-std=c++2a")
-file(GLOB SRC "model/src/*.cpp" "main.cpp")
-file(GLOB INC "model/include/*.h")
-include_directories("model/include")
+set(CMAKE_CXX_STANDARD 20)
 
-message(STATUS "include files: ${INC}")
-message(STATUS "source files: ${SRC}")
 
-add_executable(transformer ${SRC} ${INC})
+include_directories("model")
+add_executable(transformer main.cpp)
+
