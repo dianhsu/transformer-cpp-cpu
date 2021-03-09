@@ -3,7 +3,7 @@
 
 template<typename T, int D_I, int D_O>
 Linear::Linear() {
-    params = new LinearParams<T, D_I, D_O>();
+    params = new LinearParam<T, D_I, D_O>();
 }
 
 template<typename T, int D_I, int D_O>

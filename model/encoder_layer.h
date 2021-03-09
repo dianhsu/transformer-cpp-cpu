@@ -7,14 +7,18 @@
 #include "norm.h"
 #include "attention.h"
 
-template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
+template<typename T, int DIM, int D_H, int HEAD_SIZE>
 struct EncoderLayerParam {
     LayerNormParam<T, DIM> *norm1_p;
-    MultiHeadAttentionParam<T, DIM, DEP, HEAD_SIZE> *attn_p;
+    MultiHeadAttentionParam<T, DIM, HEAD_SIZE> *attn_p;
     T *dropout_rate1;
     LayerNormParam<T, DIM> *norm2_p;
     FeedForwardNetworkParam<T, DIM, DIM, D_H> *ff_p;
     T *dropout_rate2;
+    EncoderLayerParam(){
+        norm1_p = new LayerNormParam<T, DIM>();
+        attn_p = new MultiHeadAttentionParam<T, DIM, HEAD_SIZE>();
+    }
 };
 
 

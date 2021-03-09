@@ -3,10 +3,20 @@
 
 #include "decoder_layer.h"
 
-template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>
+template<typename T, int DIM, int D_H, int HEAD_SIZE, int LAYER_CNT>
 struct DecoderParam{
-    DecoderLayerParam<T, DIM, DEP, D_H, HEAD_SIZE> *layers_p[LAYER_CNT];
+    DecoderLayerParam<T, DIM, D_H, HEAD_SIZE> *layers_p[LAYER_CNT];
     LayerNormParam<T, DIM> *norm_p;
+    DecoderParam(){
+        for(int i = 0; i < LAYER_CNT; ++i){
+            layers_p[i] = new DecoderLayerParam<T, DIM, D_H, HEAD_SIZE>();
+        }
+        norm_p = new LayerNormParam<T, DIM>();
+    }
+    ~DecoderParam(){
+        delete[] layers_p;
+        delete norm;
+    }
 };
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>

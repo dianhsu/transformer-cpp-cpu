@@ -4,11 +4,25 @@
 #include "linear.h"
 #include "dropout.h"
 
-template<typename T, int DIM, int DEP, int H>
-struct MultiHeadAttentionParam{
+template<typename T, int DIM, int H>
+struct MultiHeadAttentionParam {
     LinearParam<T, DIM, DIM> *linear_q_p[H], *linear_k_p[H], *linear_v_p[H];
-    LinearParam<T, DEP*H, DIM> *linear_p;
+    LinearParam<T, DIM*H, DIM> *linear_p;
     T *dropout_rate;
+    MultiHeadAttentionParam() {
+        for(int i = 0; i < H; ++i) {
+            linear_q_p = new LinearParam<T, DIM, DIM>();
+            linear_k_p = new LinearParam<T, DIM, DIM>();
+            linear_v_p = new LinearParam<T, DIM, DIM>();
+        }
+        linear_p = new LinearParam<T, DIM*H, DIM>();
+    }
+    ~MultiHeadAttentionParam() {
+        delete[] linear_q_p;
+        delete[] linear_k_p;
+        delete[] linear_v_p;
+        delete linear_p;
+    }
 };
 
 
@@ -19,7 +33,7 @@ class MultiHeadAttention {
     void forward(T q_in[DIM], T k_in[DIM], T v_in[DIM], T output[DIM]);
 private:
     Linear<T, DIM, DIM> *linear_q[H], *linear_k[H], *linear_v[H];
-    Linear<T, DEP*H, DIM> *linear;
+    Linear<T, DIM*H, DIM> *linear;
     Dropout<T, DIM> *dropout;
     double scale;
 };

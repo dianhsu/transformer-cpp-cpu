@@ -24,7 +24,7 @@ template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
     delete dropout2;
 }
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
-void load_params(DecoderLayerParam<T, DIM, DEP, D_H, HEAD_SIZE> *p) {
+void load_params(DecoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p) {
     if(p != nullptr) {
         norm1->load_params(p->norm1_p);
         attention1->load_params(p->attention1_p);

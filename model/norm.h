@@ -4,7 +4,7 @@
 #include <cstring>
 
 template<typename T, int DIM>
-struct LayerNormParams {
+struct LayerNormParam {
     T weights[DIM];
     T bias[DIM];
 };

@@ -3,10 +3,10 @@
 template<typename T, int D_I, int D_O, int D_H>
 
 FeedForwardNetwork::FeedForwardNetwork() {
-    linear1 = new LinearWithBias<T, D_I, D_H>();
+    linear1 = new Linear<T, D_I, D_H>();
     relu = new Relu<T, D_H>();
     dropout = new Dropout<T, D_H>();
-    linear2 = new LinearWithBias<T, D_H, D_I>();
+    linear2 = new Linear<T, D_H, D_I>();
 }
 template<typename T, int D_I, int D_O, int D_H>
 ~FeedForwardNetwork::FeedForwardNetwork() {

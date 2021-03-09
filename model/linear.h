@@ -15,7 +15,7 @@ public:
     void load_params(T weight[D_I][D_O],T bias[D_O]);
     void forward(T input[D_I], T output[D_O]);
 private:
-    LinearParams<T, D_I, D_O> *params;
+    LinearParam<T, D_I, D_O> *params;
 };
 
 #endif

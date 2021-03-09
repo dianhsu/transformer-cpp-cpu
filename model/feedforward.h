@@ -11,6 +11,10 @@ struct FeedForwardNetworkParam{
     LinearParam<T, D_I, D_H> *linear_p1;
     LinearParam<T, D_H, D_O> *linear_p2;
     T *dropout_rate;
+    FeedForwardNetworkParam(){
+        linear_p1 = new LinearParam<T, D_I, D_H>();
+        linear_p2 = new LinearParam<T, D_H, D_O>();
+    }
 };
 
 template<typename T, int D_I, int D_O, int D_H>

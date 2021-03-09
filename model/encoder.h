@@ -3,9 +3,9 @@
 
 #include "encoder_layer.h"
 #include "norm.h"
-template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>
+template<typename T, int DIM, int D_H, int HEAD_SIZE, int LAYER_CNT>
 struct EncoderParam {
-    EncoderLayerParam<T, DIM, DEP, D_H, HEAD_SIZE> *layers_p[LAYER_CNT];
+    EncoderLayerParam<T, DIM, D_H, HEAD_SIZE> *layers_p[LAYER_CNT];
     LayerNormParam<T, DIM> *norm_p;
 };
 

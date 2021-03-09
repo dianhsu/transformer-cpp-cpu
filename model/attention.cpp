@@ -8,14 +8,13 @@ MultiHeadAttention::MultiHeadAttention() {
         linear_k[i] = new Linear<T, DIM, DIM>();
         linear_v[i] = new Linear<T, DIM, DIM>();
     }
-    linear = new Linear<T, DEP*H, DIM>();
+    linear = new Linear<T, DIM*H, DIM>();
     dropout = new Dropout<T, DIM>();
     this->head_size = head_size;
     this->scale = 1.0 / sqrt((DIM / H) * 1.0);
-    mha_p = new MultiHeadAttentionParams<T, DIM, DEP, H>();
 }
 template<typename T, int DIM, int DEP, int H>
-void MultiHeadAttention::load_params(MultiHeadAttentionParam<T, DIM, DEP, H>* p) {
+void MultiHeadAttention::load_params(MultiHeadAttentionParam<T, DIM, H>* p) {
     for(int i = 0; i < H; ++i) {
         if(p->linear_q_p[i] != nullptr) {
             linear_q[i]->load_params(p->linear_q_p[i]);
@@ -31,7 +30,7 @@ void MultiHeadAttention::load_params(MultiHeadAttentionParam<T, DIM, DEP, H>* p)
     if(p->linear_p != nullptr) {
         linear->load_params(p->linear_p);
     }
-    if(p->dropout_rate != nullptr){
+    if(p->dropout_rate != nullptr) {
         dropout->load_params(*(p->dropout_rate));
     }
 }
@@ -76,13 +75,15 @@ void MultiHeadAttention::forward(T q_in[DEP][DIM], T k_in[DEP][DIM], T v_in[DEP]
         }
     }
     // Concat
-    T f_nex_tmp[DEP*H][DIM];
+    T f_nex_tmp[DEP][DIM*H];
     for(int h = 0; h < H; ++h) {
         for(int i = 0; i < DEP; ++i) {
             for(int j = 0; j < DIM; ++j) {
-                f_nex_tmp[h*H+i][j]=f_tmp[h][i][j];
+                f_nex_tmp[i][h*H+j]=f_tmp[h][i][j];
             }
         }
     }
-    linear->forward(f_nex_tmp, output);
+    for(int i = 0; i < DEP; ++i) {
+        linear->forward(f_nex_tmp, output);
+    }
 }
