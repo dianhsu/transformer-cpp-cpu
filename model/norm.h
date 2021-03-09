@@ -1,10 +1,10 @@
-#ifndef __MODEL_NORMLAYER_H__
-#define __MODEL_NORMLAYER_H__
+#ifndef __MODEL_LAYERNORM_H__
+#define __MODEL_LAYERNORM_H__
 
 #include <cstring>
 
 template<typename T, int DIM>
-class NormLayer {
+class LayerNorm {
 public:
     void load_params(T weight[DIM], T bias[DIM]) {
         memcpy(this->weight, weight, sizeof(weight));

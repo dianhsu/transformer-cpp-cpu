@@ -1,12 +1,12 @@
 #include "normlayer.h"
 
 template<typename T, int DIM>
-void NormLayer::load_params(T weight[DIM], T bias[DIM]) {
+void LayerNorm::load_params(T weight[DIM], T bias[DIM]) {
     memcpy(this->weight, weight, sizeof(weight));
     memcpy(this->bias, bias, sizeof(bias));
 }
 template<typename T, int DIM>
-void NormLayer::forward(T input[DIM], T output[DIM]) {
+void LayerNorm::forward(T input[DIM], T output[DIM]) {
     T sum = 0;
     T sum2 = 0;
     for(int i = 0; i < DIM; ++i) {
