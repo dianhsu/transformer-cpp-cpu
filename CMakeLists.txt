@@ -8,6 +8,6 @@ file(GLOB INC "model/include/*.h")
 include_directories("model/include")
 
 message(STATUS "include files: ${INC}")
-message(STATUS "source files: ${SRC} main.cpp")
+message(STATUS "source files: ${SRC}")
 
 add_executable(transformer ${SRC} ${INC})
