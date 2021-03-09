@@ -1,7 +1,7 @@
 #include "encoder_layer.h"
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
-EncoderLayer::EncoderLayer() {
+EncoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>::EncoderLayer() {
     norm1 = new LayerNorm<T, DIM>();
     attention = new MultiHeadAttention<T, DIM, HEAD_SIZE>();
     dropout1 = new Dropout<T, DIM>();
@@ -10,7 +10,7 @@ EncoderLayer::EncoderLayer() {
     dropout2 = new Dropout<T, DIM>();
 }
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
-void EncoderLayer::load_params(EncoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p) {
+void EncoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>::load_params(EncoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p) {
     if(p != nullptr) {
         norm1->load_params(p->norm1_p);
         attention->load_params(p->attn_p);
@@ -26,7 +26,7 @@ void EncoderLayer::load_params(EncoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p) {
 }
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
-void EncoderLayer::forward(T input[DEP][DIM], T output[DEP][DIM]) {
+void EncoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>::forward(T input[DEP][DIM], T output[DEP][DIM]) {
     T i_tmp[DEP][DIM];
     for(int i = 0; i < DEP; ++i) {
         norm1->forward(input[i], i_tmp[i]);

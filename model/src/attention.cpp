@@ -2,7 +2,7 @@
 #include "function.h"
 
 template<typename T, int DIM, int DEP, int H>
-MultiHeadAttention::MultiHeadAttention() {
+MultiHeadAttention<T, DIM, DEP, H>::MultiHeadAttention() {
     for(int i = 0; i < H; ++i) {
         linear_q[i] = new Linear<T, DIM, DIM>();
         linear_k[i] = new Linear<T, DIM, DIM>();
@@ -14,7 +14,7 @@ MultiHeadAttention::MultiHeadAttention() {
     this->scale = 1.0 / sqrt((DIM / H) * 1.0);
 }
 template<typename T, int DIM, int DEP, int H>
-void MultiHeadAttention::load_params(MultiHeadAttentionParam<T, DIM, H>* p) {
+void MultiHeadAttention<T, DIM, DEP, H>::load_params(MultiHeadAttentionParam<T, DIM, H>* p) {
     for(int i = 0; i < H; ++i) {
         if(p->linear_q_p[i] != nullptr) {
             linear_q[i]->load_params(p->linear_q_p[i]);
@@ -35,7 +35,7 @@ void MultiHeadAttention::load_params(MultiHeadAttentionParam<T, DIM, H>* p) {
     }
 }
 template<typename T, int DIM, int DEP, int H>
-void MultiHeadAttention::forward(T q_in[DEP][DIM], T k_in[DEP][DIM], T v_in[DEP][DIM], T output[DEP][DIM]) {
+void MultiHeadAttention<T, DIM, DEP, H>::forward(T q_in[DEP][DIM], T k_in[DEP][DIM], T v_in[DEP][DIM], T output[DEP][DIM]) {
     T q_tmp[H][DEP][DIM], k_tmp[H][DEP][DIM], v_tmp[H][DEP][DIM];
     for(int i = 0; i < H; ++i) {
         for(int j = 0; j < DEP; ++j) {

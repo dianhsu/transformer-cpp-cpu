@@ -4,6 +4,7 @@
 #include "linear.h"
 #include "dropout.h"
 
+
 template<typename T, int DIM, int H>
 struct MultiHeadAttentionParam {
     LinearParam<T, DIM, DIM> *linear_q_p[H], *linear_k_p[H], *linear_v_p[H];

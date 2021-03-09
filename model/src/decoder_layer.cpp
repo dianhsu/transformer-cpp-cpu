@@ -1,7 +1,7 @@
 #include "decoder_layer.h"
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
-DecoderLayer::DecoderLayer() {
+DecoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>::DecoderLayer() {
     norm1 = new LayerNorm<T, DIM>();
     attention1 = new MultiHeadAttention<T, DIM, DEP, HEAD_SIZE>();
     dropout1 = new Dropout<T, DIM>();
@@ -13,7 +13,7 @@ DecoderLayer::DecoderLayer() {
 }
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
-DecoderLayer::~DecoderLayer() {
+DecoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>::~DecoderLayer() {
     delete norm1;
     delete attention1;
     delete dropout1;
@@ -24,7 +24,7 @@ DecoderLayer::~DecoderLayer() {
     delete dropout2;
 }
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
-void load_params(DecoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p) {
+void DecoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>::load_params(DecoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p) {
     if(p != nullptr) {
         norm1->load_params(p->norm1_p);
         attention1->load_params(p->attention1_p);
@@ -43,7 +43,7 @@ void load_params(DecoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p) {
 }
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
-void forward(T intput[DEP][DIM], T enc_output[DEP][DIM], T output[DEP][DIM]) {
+void DecoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>::forward(T intput[DEP][DIM], T enc_output[DEP][DIM], T output[DEP][DIM]) {
     T tmp[7][DEP][DIM];
     norm1->forward(input, tmp[0]);
     attention1->forward(tmp[0], tmp[0], tmp[0], tmp[1]);

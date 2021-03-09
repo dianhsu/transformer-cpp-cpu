@@ -1,21 +1,21 @@
 #include "norm.h"
 
 template<typename T, int DIM>
-LayerNorm::LayerNorm() {
+LayerNorm<T, DIM>::LayerNorm() {
 }
 
 template<typename T, int DIM>
-LayerNorm::~LayerNorm() {
+LayerNorm<T, DIM>::~LayerNorm() {
 }
 
 template<typename T, int DIM>
-void LayerNorm::load_params(LayerNormParam<T, DIM> *p) {
+void LayerNorm<T, DIM>::load_params(LayerNormParam<T, DIM> *p) {
     if(p != nullptr) {
         this->params = p;
     }
 }
 template<typename T, int DIM>
-void LayerNorm::forward(T input[DIM], T output[DIM]) {
+void LayerNorm<T, DIM>::forward(T input[DIM], T output[DIM]) {
     T sum = 0;
     T sum2 = 0;
     for(int i = 0; i < DIM; ++i) {

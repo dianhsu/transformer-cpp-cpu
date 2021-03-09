@@ -1,15 +1,15 @@
 #include "dropout.h"
 
 template<typename T, int DIM>
-Dropout::Dropout() {
+Dropout<T, DIM>::Dropout() {
     this->dropout_rate = 0.1;
 }
 template<typename T, int DIM>
-void Dropout::load_params(T dropout_rate) {
+void Dropout<T, DIM>::load_params(T dropout_rate) {
     this->dropout_rate = dropout_rate;
 }
 template<typename T, int DIM>
-void Dropout::forward(T input[DIM], T output[DIM]) {
+void Dropout<T, DIM>::forward(T input[DIM], T output[DIM]) {
     for(int i = 0; i < DIM; ++i) {
         if(input[i] < this->dropout_rate) {
             output[i] = 0;
@@ -19,7 +19,7 @@ void Dropout::forward(T input[DIM], T output[DIM]) {
     }
 }
 template<typename T, int DIM>
-void Dropout::forward(T input[DIM]) {
+void Dropout<T, DIM>::forward(T input[DIM]) {
     for(int i = 0; i < DIM; ++i) {
         if(input[i] < this->dropout_rate) {
             input[i] = 0;

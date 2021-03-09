@@ -2,7 +2,7 @@
 #include <cstring>
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>
-Encoder::Encoder() {
+Encoder<T, DIM, DEP, D_H, HEAD_SIZE, LAYER_CNT>::Encoder() {
     for(int i = 0; i < LAYER_CNT; ++i) {
         layer[i] = new EncoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>();
     }
@@ -10,7 +10,7 @@ Encoder::Encoder() {
 }
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>
-void Encoder::load_params(EncoderParam<T, DIM, D_H, HEAD_SIZE, LAYER_CNT> *p) {
+void Encoder<T, DIM, DEP, D_H, HEAD_SIZE, LAYER_CNT>::load_params(EncoderParam<T, DIM, D_H, HEAD_SIZE, LAYER_CNT> *p) {
     if(p != nullptr) {
         for(int i = 0; i < LAYER_CNT; ++i) {
             layers[i]->load_params(p->layers_p[i]);
@@ -20,7 +20,7 @@ void Encoder::load_params(EncoderParam<T, DIM, D_H, HEAD_SIZE, LAYER_CNT> *p) {
 
 }
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>
-void forward(T input[DEP][DIM], T output[DEP][DIM]) {
+void Encoder<T, DIM, DEP, D_H, HEAD_SIZE, LAYER_CNT>::forward(T input[DEP][DIM], T output[DEP][DIM]) {
     T tmp[LAYER_CNT][DEP][DIM];
     for(int i = 0; i < LAYER_CNT; ++i) {
         if(i == 0) {
