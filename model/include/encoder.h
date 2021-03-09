@@ -14,7 +14,7 @@ struct EncoderParam {
         norm_p = new LayerNormParam<T, DIM>();
     }
     ~EncoderParam(){
-        delete[] layer_p;
+        delete[] layers_p;
         delete norm_p;
     }
 };
