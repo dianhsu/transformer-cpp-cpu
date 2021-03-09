@@ -12,7 +12,7 @@ class Linear {
 public:
     Linear();
     ~Linear();
-    void load_params(T weight[D_I][D_O],T bias[D_O]);
+    void load_params(LinearParam<T, D_I, D_O> *p);
     void forward(T input[D_I], T output[D_O]);
 private:
     LinearParam<T, D_I, D_O> *params;

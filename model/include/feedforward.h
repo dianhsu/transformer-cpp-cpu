@@ -26,7 +26,7 @@ class FeedForwardNetwork {
 public:
     FeedForwardNetwork();
     ~FeedForwardNetwork();
-    void load_params(T weight1[D_I][D_H], T bias1[D_H], T weight2[D_H][D_O], T bias2[D_O], T dropout_rate);
+    void load_params(FeedForwardNetworkParam<T, D_I, D_O, D_H> *p);
     void forward(T input[D_I], T output[D_O]);
 private:
     Linear<T, D_I, D_H> *linear1;
