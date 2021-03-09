@@ -8,7 +8,7 @@ Transformer::Transformer() {
 }
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int ENC_LAYER_CNT, int DEC_LAYER_CNT>
-~Transformer::Transformer() {
+Transformer::~Transformer() {
     delete encoder;
     delete decoder;
 }

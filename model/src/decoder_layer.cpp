@@ -13,7 +13,7 @@ DecoderLayer::DecoderLayer() {
 }
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
-~DecoderLayer::DecoderLayer() {
+DecoderLayer::~DecoderLayer() {
     delete norm1;
     delete attention1;
     delete dropout1;

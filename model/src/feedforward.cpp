@@ -9,7 +9,7 @@ FeedForwardNetwork::FeedForwardNetwork() {
     linear2 = new Linear<T, D_H, D_I>();
 }
 template<typename T, int D_I, int D_O, int D_H>
-~FeedForwardNetwork::FeedForwardNetwork() {
+FeedForwardNetwork::~FeedForwardNetwork() {
     delete linear1;
     delete relu;
     delete dropout;

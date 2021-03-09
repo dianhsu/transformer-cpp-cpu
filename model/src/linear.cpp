@@ -6,7 +6,7 @@ Linear::Linear() {
 }
 
 template<typename T, int D_I, int D_O>
-~Linear::Linear() {
+Linear::~Linear() {
 }
 
 template<typename T, int D_I, int D_O>

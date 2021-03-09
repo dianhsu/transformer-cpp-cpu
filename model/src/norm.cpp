@@ -5,7 +5,7 @@ LayerNorm::LayerNorm() {
 }
 
 template<typename T, int DIM>
-~LayerNorm::LayerNorm() {
+LayerNorm::~LayerNorm() {
 }
 
 template<typename T, int DIM>

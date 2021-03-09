@@ -8,7 +8,7 @@ Decoder::Decoder() {
     norm = new LayerNorm<T, DIM>();
 }
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>
-~Decoder::Decoder() {
+Decoder::~Decoder() {
     for(int i = 0; i < LAYER_CNT; ++i) {
         delete layers[i];
     }
