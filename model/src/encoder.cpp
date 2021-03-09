@@ -4,7 +4,7 @@
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>
 Encoder<T, DIM, DEP, D_H, HEAD_SIZE, LAYER_CNT>::Encoder() {
     for(int i = 0; i < LAYER_CNT; ++i) {
-        layer[i] = new EncoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>();
+        layers[i] = new EncoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>();
     }
     norm = new LayerNorm<T, DIM>();
 }
