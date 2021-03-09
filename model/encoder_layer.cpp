@@ -13,7 +13,6 @@ template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
 void EncoderLayer::load_params(
     T weights_norm1[DIM],
     T bias_norm1[DIM],
-
     T weights_q[HEAD_SIZE][DIM][DIM],
     T weights_k[HEAD_SIZE][DIM][DIM],
     T weights_v[HEAD_SIZE][DIM][DIM],
@@ -22,15 +21,12 @@ void EncoderLayer::load_params(
     T bias_k[HEAD_SIZE][DIM],
     T bias_v[HEAD_SIZE][DIM],
     T bia2[DIM]
-
     T dropout_rate1,
-
     T weights1_ff[DIM][D_H],
     T bias1_ff[D_H],
     T weights2_ff[D_H][DIM],
     T bias2_ff[DIM],
     T dropout_rate_ff,
-
     T weights_norm2[DIM],
     T bias_norm2[DIM],
     T dropout_rate2
