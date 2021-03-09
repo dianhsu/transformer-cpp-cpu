@@ -40,7 +40,7 @@ public:
     DecoderLayer();
     ~DecoderLayer();
     void load_params(DecoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p);
-    void forward(T intput[DEP][DIM], T enc_output[DEP][DIM], T output[DEP][DIM]);
+    void forward(T input[DEP][DIM], T enc_output[DEP][DIM], T output[DEP][DIM]);
 private:
     LayerNorm<T, DIM> *norm1;
     MultiHeadAttention<T, DIM, DEP, HEAD_SIZE> *attention1;

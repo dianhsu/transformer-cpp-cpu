@@ -43,14 +43,14 @@ void DecoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>::load_params(DecoderLayerParam<T,
 }
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
-void DecoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>::forward(T intput[DEP][DIM], T enc_output[DEP][DIM], T output[DEP][DIM]) {
+void DecoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>::forward(T input[DEP][DIM], T enc_output[DEP][DIM], T output[DEP][DIM]) {
     T tmp[7][DEP][DIM];
     norm1->forward(input, tmp[0]);
     attention1->forward(tmp[0], tmp[0], tmp[0], tmp[1]);
     dropout1->forward(tmp[1],tmp[2]);
     norm2->forward(tmp[2], tmp[3]);
     attention2->forward(tmp[3], enc_output, enc_output, tmp[4]);
-    norm->forward(tmp[4], tmp[5]);
+    norm3->forward(tmp[4], tmp[5]);
     ff->forward(tmp[5], tmp[6]);
     dropout2->forward(tmp[6], output);
 }
