@@ -12,9 +12,9 @@ struct MultiHeadAttentionParam {
     T *dropout_rate;
     MultiHeadAttentionParam() {
         for(int i = 0; i < H; ++i) {
-            linear_q_p = new LinearParam<T, DIM, DIM>();
-            linear_k_p = new LinearParam<T, DIM, DIM>();
-            linear_v_p = new LinearParam<T, DIM, DIM>();
+            linear_q_p[i] = new LinearParam<T, DIM, DIM>();
+            linear_k_p[i] = new LinearParam<T, DIM, DIM>();
+            linear_v_p[i] = new LinearParam<T, DIM, DIM>();
         }
         linear_p = new LinearParam<T, DIM*H, DIM>();
     }
