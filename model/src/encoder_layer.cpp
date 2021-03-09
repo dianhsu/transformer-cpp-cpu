@@ -3,7 +3,7 @@
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
 EncoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>::EncoderLayer() {
     norm1 = new LayerNorm<T, DIM>();
-    attention = new MultiHeadAttention<T, DIM, HEAD_SIZE>();
+    attention = new MultiHeadAttention<T, DIM, DEP, HEAD_SIZE>();
     dropout1 = new Dropout<T, DIM>();
     norm2 = new LayerNorm<T, DIM>();
     ff = new FeedForwardNetwork<T, DIM, DIM, D_H>();
