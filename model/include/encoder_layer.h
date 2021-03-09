@@ -18,6 +18,14 @@ struct EncoderLayerParam {
     EncoderLayerParam(){
         norm1_p = new LayerNormParam<T, DIM>();
         attn_p = new MultiHeadAttentionParam<T, DIM, HEAD_SIZE>();
+        norm2_p = new LayerNormParam<T, DIM>();
+        ff_p = new FeedForwardNetworkParam<T, DIM, DIM, D_H>();
+    }
+    ~EncoderLayerParam(){
+        delete norm1_p;
+        delete attn_p;
+        delete norm2_p;
+        delete ff_p;
     }
 };
 

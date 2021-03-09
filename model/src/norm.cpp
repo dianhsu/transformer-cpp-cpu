@@ -2,19 +2,16 @@
 
 template<typename T, int DIM>
 LayerNorm::LayerNorm() {
-    params = new LayerNormParams<T, DIM>();
 }
 
 template<typename T, int DIM>
 ~LayerNorm::LayerNorm() {
-    delete params;
 }
 
 template<typename T, int DIM>
 void LayerNorm::load_params(LayerNormParam<T, DIM> *p) {
-    if(p != nullptr){
-        memcpy(this->params->weights, p->weights, sizeof(T)*DIM);
-        memcpy(this->params->bias, p->bias, sizeof(T)*DIM);
+    if(p != nullptr) {
+        this->params = p;
     }
 }
 template<typename T, int DIM>

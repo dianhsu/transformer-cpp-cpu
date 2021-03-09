@@ -23,12 +23,10 @@ class Transformer{
 public:
     Transformer();
     ~Transformer();
-    void load_params();
+    void load_params(TransformerParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT> *p);
     void forward(T input[DEP][DIM], T output[DEP][DIM]);
 private:
     Encoder<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT> *encoder;
     Decoder<T, DIM, DEP, D_H, HEAD_SIZE, DEC_LAYER_CNT> *decoder;
 };
-
-
 #endif

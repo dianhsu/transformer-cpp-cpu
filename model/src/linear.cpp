@@ -3,19 +3,16 @@
 
 template<typename T, int D_I, int D_O>
 Linear::Linear() {
-    params = new LinearParam<T, D_I, D_O>();
 }
 
 template<typename T, int D_I, int D_O>
 ~Linear::Linear() {
-    delete params;
 }
 
 template<typename T, int D_I, int D_O>
 void Linear::load_params(LinearParam<T, D_I, D_O> *p) {
     if(p != nullptr) {
-        memcpy(this->params->weights, p->weights, sizeof(T)*D_I*D_O);
-        memcpy(this->params->bias, p->bias, sizeof(T)*D_O);
+        this->params = p;
     }
 }
 template<typename T, int D_I, int D_O>

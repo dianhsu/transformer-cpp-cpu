@@ -18,12 +18,8 @@ template<typename T, int D_I, int D_O, int D_H>
 template<typename T, int D_I, int D_O, int D_H>
 void FeedForwardNetwork::load_params(FeedForwardNetworkParam<T, D_I, D_O, D_H> *p) {
     if(p != nullptr) {
-        if(p->linear_p1 != nullptr) {
-            linear1->load_params(p->linear_p1);
-        }
-        if(p->linear_p2 != nullptr) {
-            linear2->load_params(p->linear_p2);
-        }
+        linear1->load_params(p->linear_p1);
+        linear2->load_params(p->linear_p2);
         if(p->dropout_rate != nullptr) {
             dropout->load_params(*(p->dropout_rate));
         }
