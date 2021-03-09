@@ -7,14 +7,16 @@ template<typename T, int DIM, int D_H, int HEAD_SIZE, int LAYER_CNT>
 struct EncoderParam {
     EncoderLayerParam<T, DIM, D_H, HEAD_SIZE> *layers_p[LAYER_CNT];
     LayerNormParam<T, DIM> *norm_p;
-    EncoderParam(){
-        for(int i = 0; i < LAYER_CNT; ++i){
+    EncoderParam() {
+        for(int i = 0; i < LAYER_CNT; ++i) {
             layers_p[i] = new EncoderLayerParam<T, DIM, D_H, HEAD_SIZE>();
         }
         norm_p = new LayerNormParam<T, DIM>();
     }
-    ~EncoderParam(){
-        delete[] layers_p;
+    ~EncoderParam() {
+        for(int i = 0; i < LAYER_CNT; ++i) {
+            delete layers_p[i];
+        }
         delete norm_p;
     }
 };

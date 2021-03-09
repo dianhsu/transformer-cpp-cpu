@@ -14,7 +14,9 @@ struct DecoderParam{
         norm_p = new LayerNormParam<T, DIM>();
     }
     ~DecoderParam(){
-        delete[] layers_p;
+        for(int i = 0; i < LAYER_CNT; ++i){
+            delete layers_p[i];
+        }
         delete norm_p;
     }
 };

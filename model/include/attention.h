@@ -19,9 +19,11 @@ struct MultiHeadAttentionParam {
         linear_p = new LinearParam<T, DIM*H, DIM>();
     }
     ~MultiHeadAttentionParam() {
-        delete[] linear_q_p;
-        delete[] linear_k_p;
-        delete[] linear_v_p;
+        for(int i = 0; i < H; ++i){
+            delete linear_q_p[i];
+            delete linear_k_p[i];
+            delete linear_v_p[i];
+        }
         delete linear_p;
     }
 };
