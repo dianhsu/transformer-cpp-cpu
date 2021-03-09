@@ -15,7 +15,7 @@ template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>
     delete norm;
 }
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>
-void Decoder::load_params(DecoderParam<T, DIM, DEP, D_H, HEAD_SIZE, LAYER_CNT> *p) {
+void Decoder::load_params(DecoderParam<T, DIM, D_H, HEAD_SIZE, LAYER_CNT> *p) {
     if(p != nullptr) {
         for(int i = 0; i < LAYER_CNT; ++i) {
             layers[i]->load_params(

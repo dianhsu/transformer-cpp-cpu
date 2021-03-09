@@ -13,7 +13,7 @@ template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>
 class Encoder {
 public:
     Encoder();
-    void load_params(EncoderParam<T, DIM, DEP, D_H, HEAD_SIZE, LAYER_CNT> *p);
+    void load_params(EncoderParam<T, DIM, D_H, HEAD_SIZE, LAYER_CNT> *p);
     void forward(T input[DEP][DIM], T output[DEP][DIM]);
 private:
     EncoderLayer<T, DIM, DEP, D_H, HEAD_SIZE> *layers[LAYER_CNT];

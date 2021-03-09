@@ -24,7 +24,7 @@ class Decoder {
 public:
     Decoder();
     ~Decoder();
-    void load_params(DecoderParam<T, DIM, DEP, D_H, HEAD_SIZE, LAYER_CNT> *p);
+    void load_params(DecoderParam<T, DIM, D_H, HEAD_SIZE, LAYER_CNT> *p);
     void forward(T input[DEP][DIM], T output[DEP][DIM]);
 private:
     DecoderLayer<T, DIM, DEP, D_H, HEAD_SIZE> *layers[LAYER_CNT];

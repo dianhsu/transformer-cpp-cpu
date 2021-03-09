@@ -26,7 +26,7 @@ template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
 class EncoderLayer {
 public:
     EncoderLayer();
-    void load_params(EncoderLayerParam<T, DIM, DEP, D_H, HEAD_SIZE> *p);
+    void load_params(EncoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p);
     void forward(T input[DEP][DIM], T output[DEP][DIM]);
 private:
     LayerNorm<T, DIM> *norm1;

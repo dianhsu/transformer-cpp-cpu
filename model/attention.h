@@ -29,7 +29,7 @@ struct MultiHeadAttentionParam {
 template<typename T, int DIM, int DEP, int H>
 class MultiHeadAttention {
     MultiHeadAttention();
-    void load_params(MultiHeadAttentionParam<T, DIM, DEP, H> *p);
+    void load_params(MultiHeadAttentionParam<T, DIM, H> *p);
     void forward(T q_in[DIM], T k_in[DIM], T v_in[DIM], T output[DIM]);
 private:
     Linear<T, DIM, DIM> *linear_q[H], *linear_k[H], *linear_v[H];

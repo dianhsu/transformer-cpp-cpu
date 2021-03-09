@@ -31,7 +31,7 @@ public:
         }
     }
 private:
-    LayerNormParams<T, DIM> *params;
+    LayerNormParam<T, DIM> *params;
 
 };
 

@@ -10,7 +10,7 @@ EncoderLayer::EncoderLayer() {
     dropout2 = new Dropout<T, DIM>();
 }
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
-void EncoderLayer::load_params(EncoderLayerParam<T, DIM, DEP, D_H, HEAD_SIZE> *p) {
+void EncoderLayer::load_params(EncoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p) {
     if(p != nullptr) {
         norm1->load_params(p->norm1_p);
         attention->load_params(p->attn_p);

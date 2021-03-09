@@ -39,7 +39,7 @@ class DecoderLayer {
 public:
     DecoderLayer();
     ~DecoderLayer();
-    void load_params(DecoderLayerParam<T, DIM, DEP, D_H, HEAD_SIZE> *p);
+    void load_params(DecoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p);
     void forward();
 private:
     LayerNorm<T, DIM> *norm1;
