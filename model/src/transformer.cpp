@@ -13,7 +13,7 @@ Transformer<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT>::~Transfo
     delete decoder;
 }
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int ENC_LAYER_CNT, int DEC_LAYER_CNT>
-void Transformer<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT>::load_params(TransformerParam<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT> *p) {
+void Transformer<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT>::load_params(TransformerParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT> *p) {
     if(p != nullptr) {
         encoder->load_params(p->encoder_p);
         decoder->load_params(p->decoder_p);
