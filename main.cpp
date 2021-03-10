@@ -14,8 +14,8 @@ int main() {
 
     auto *p_tran = new TransformerParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT>();
     auto *transformer = new Transformer<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT>(*p_tran);
-    auto *input = new array<array<T, DIM>, DEP>();
-    auto *output = new array<array<T, DIM>, DEP>();
+    auto *input = new array<array<T, DIM>, DEP>{};
+    auto *output = new array<array<T, DIM>, DEP>{};
     transformer->forward(*input, *output);
     delete output;
     delete input;

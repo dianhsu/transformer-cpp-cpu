@@ -48,7 +48,7 @@ public:
         delete dropout2;
     }
 
-    void forward(const array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
+    void forward(const array<array<T, DIM>, DEP> input, array<array<T, DIM>, DEP> &output) {
         auto tmp = array<array<array<T, DIM>, DEP>, 4>{};
         for (int i = 0; i < DEP; ++i) {
             norm1->forward(input[i], tmp[0][i]);

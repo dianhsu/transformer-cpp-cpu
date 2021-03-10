@@ -39,7 +39,7 @@ public:
         delete linear2;
     }
 
-    void forward(const array<T, D_I> &input, array<T, D_O> &output) {
+    void forward(const array<T, D_I> input, array<T, D_O> &output) {
         auto *tmp = new array<array<T, D_H>, 3>{};
         linear1->forward(input, (*tmp)[0]);
         relu->forward((*tmp)[0], (*tmp)[1]);

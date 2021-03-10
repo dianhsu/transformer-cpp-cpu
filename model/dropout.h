@@ -17,7 +17,7 @@ public:
     }
 
 
-    void forward(const array<T, DIM> &input, array<T, DIM> &output) {
+    void forward(const array<T, DIM> input, array<T, DIM> &output) {
         for (int i = 0; i < DIM; ++i) {
             if (input[i] < this->dropout_rate) {
                 output[i] = 0;

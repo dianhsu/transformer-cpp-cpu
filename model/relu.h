@@ -4,7 +4,7 @@
 template<typename T, int DIM>
 class Relu {
 public:
-    void forward(const array<T, DIM> &input, array<T, DIM> &output) {
+    void forward(const array<T, DIM> input, array<T, DIM> &output) {
         for (int i = 0; i < DIM; ++i) {
             if (input[i] < 0) {
                 output[i] = 0;

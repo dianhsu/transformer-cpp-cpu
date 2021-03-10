@@ -24,7 +24,7 @@ public:
         this->params = &p;
     }
 
-    void forward(const array<T, D_I> &input, array<T, D_O> &output) {
+    void forward(const array<T, D_I> input, array<T, D_O> &output) {
         for (int j = 0; j < D_O; ++j) {
             output[j] = this->params->bias[j];
             for (int i = 0; i < D_I; ++i) {

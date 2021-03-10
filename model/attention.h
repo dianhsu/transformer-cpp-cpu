@@ -45,9 +45,9 @@ public:
         delete linear;
         delete dropout;
     }
-    void forward(const array<array<T, DIM>, DEP> &q_in,
-                 const array<array<T, DIM>, DEP> &k_in,
-                 const array<array<T, DIM>, DEP> &v_in,
+    void forward(const array<array<T, DIM>, DEP> q_in,
+                 const array<array<T, DIM>, DEP> k_in,
+                 const array<array<T, DIM>, DEP> v_in,
                  array<array<T, DIM>, DEP> &output) {
         auto q_tmp =  array<array<array<T, DIM>, DEP>, H>{};
         auto k_tmp =  array<array<array<T, DIM>, DEP>, H>{};
