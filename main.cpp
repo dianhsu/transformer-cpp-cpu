@@ -17,6 +17,9 @@ int main() {
     auto *input = new array<array<T, DIM>, DEP>();
     auto *output = new array<array<T, DIM>, DEP>();
     transformer->forward(*input, *output);
-
+    delete output;
+    delete input;
+    delete transformer;
+    delete p_tran;
     return 0;
 }
