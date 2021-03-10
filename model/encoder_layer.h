@@ -77,7 +77,6 @@ public:
                 output[i][j] = input[i][j] + tmp[3][i][j];
             }
         }
-        delete tmp;
     }
 
 private:
