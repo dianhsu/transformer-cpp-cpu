@@ -18,7 +18,7 @@ struct TransformerParam {
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int ENC_LAYER_CNT, int DEC_LAYER_CNT>
 class Transformer {
 public:
-    explicit Transformer(TransformerParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT> &p) {
+    Transformer(TransformerParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT> &p) {
         encoder = new Encoder<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT>(p.encoder_p);
         decoder = new Decoder<T, DIM, DEP, D_H, HEAD_SIZE, DEC_LAYER_CNT>(p.decoder_p);
     }
