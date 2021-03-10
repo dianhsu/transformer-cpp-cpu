@@ -7,29 +7,20 @@
 
 template<typename T, int DIM, int D_H, int HEAD_SIZE, int ENC_LAYER_CNT, int DEC_LAYER_CNT>
 struct TransformerParam {
-    EncoderParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT> *encoder_p;
-    DecoderParam<T, DIM, D_H, HEAD_SIZE, DEC_LAYER_CNT> *decoder_p;
+    EncoderParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT> encoder_p;
+    DecoderParam<T, DIM, D_H, HEAD_SIZE, DEC_LAYER_CNT> decoder_p;
 
-    TransformerParam() {
-        encoder_p = new EncoderParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT>();
-        decoder_p = new DecoderParam<T, DIM, D_H, HEAD_SIZE, DEC_LAYER_CNT>();
-    }
-
-    ~TransformerParam() {
-        delete encoder_p;
-        delete decoder_p;
-    }
-    long long count(){
-        return encoder_p->count() + decoder_p->count();
+    long long count() {
+        return encoder_p.count() + decoder_p.count();
     }
 };
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int ENC_LAYER_CNT, int DEC_LAYER_CNT>
 class Transformer {
 public:
-    Transformer() {
-        encoder = new Encoder<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT>();
-        decoder = new Decoder<T, DIM, DEP, D_H, HEAD_SIZE, DEC_LAYER_CNT>();
+    explicit Transformer(TransformerParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT> &p) {
+        encoder = new Encoder<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT>(p.encoder_p);
+        decoder = new Decoder<T, DIM, DEP, D_H, HEAD_SIZE, DEC_LAYER_CNT>(p.decoder_p);
     }
 
     ~Transformer() {
@@ -37,17 +28,11 @@ public:
         delete decoder;
     }
 
-    void load_params(TransformerParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT> *p) {
-        if (p != nullptr) {
-            encoder->load_params(p->encoder_p);
-            decoder->load_params(p->decoder_p);
-        }
-    }
 
-    void forward(T input[DEP][DIM], T output[DEP][DIM]) {
-        T tmp[DEP][DIM];
+    void forward(array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
+        array<array<T, DIM>, DEP> tmp;
         encoder->forward(input, tmp);
-        decoder->forward(tmp, output);
+        decoder->forward(tmp, tmp, output);
     }
 
 private:

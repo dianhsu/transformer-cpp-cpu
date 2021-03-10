@@ -8,49 +8,38 @@
 
 template<typename T, int DIM, int D_H, int HEAD_SIZE>
 struct DecoderLayerParam {
-    LayerNormParam<T, DIM> *norm1_p;
-    MultiHeadAttentionParam<T, DIM, HEAD_SIZE> *attention1_p;
-    T *dropout_rate1;
-    LayerNormParam<T, DIM> *norm2_p;
-    MultiHeadAttentionParam<T, DIM, HEAD_SIZE> *attention2_p;
-    LayerNormParam<T, DIM> *norm3_p;
-    FeedForwardNetworkParam<T, DIM, DIM, D_H> *ff_p;
-    T *dropout_rate2;
+    LayerNormParam<T, DIM> norm1_p;
+    MultiHeadAttentionParam<T, DIM, HEAD_SIZE> attention1_p;
+    T dropout_rate1;
+    LayerNormParam<T, DIM> norm2_p;
+    MultiHeadAttentionParam<T, DIM, HEAD_SIZE> attention2_p;
+    LayerNormParam<T, DIM> norm3_p;
+    FeedForwardNetworkParam<T, DIM, DIM, D_H> ff_p;
+    T dropout_rate2;
 
     DecoderLayerParam() {
-        norm1_p = new LayerNormParam<T, DIM>();
-        attention1_p = new MultiHeadAttentionParam<T, DIM, HEAD_SIZE>();
-        norm2_p = new LayerNormParam<T, DIM>();
-        attention2_p = new MultiHeadAttentionParam<T, DIM, HEAD_SIZE>();
-        norm3_p = new LayerNormParam<T, DIM>();
-        ff_p = new FeedForwardNetworkParam<T, DIM, DIM, D_H>();
+        dropout_rate1 = 0.1;
+        dropout_rate2 = 0.1;
     }
 
-    ~DecoderLayerParam() {
-        delete norm1_p;
-        delete attention1_p;
-        delete norm2_p;
-        delete attention2_p;
-        delete norm3_p;
-        delete ff_p;
-    }
-    long long count(){
-        return norm1_p->count() + attention1_p->count() + norm2_p->count()+ attention2_p->count() + norm3_p->count() + ff_p->count();
+    long long count() {
+        return norm1_p.count() + attention1_p.count() + norm2_p.count() + attention2_p.count() + norm3_p.count() +
+               ff_p.count();
     }
 };
 
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE>
 class DecoderLayer {
 public:
-    DecoderLayer() {
-        norm1 = new LayerNorm<T, DIM>();
-        attention1 = new MultiHeadAttention<T, DIM, DEP, HEAD_SIZE>();
-        dropout1 = new Dropout<T, DIM>();
-        norm2 = new LayerNorm<T, DIM>();
-        attention2 = new MultiHeadAttention<T, DIM, DEP, HEAD_SIZE>();
-        norm3 = new LayerNorm<T, DIM>();
-        ff = new FeedForwardNetwork<T, DIM, DIM, D_H>();
-        dropout2 = new Dropout<T, DIM>();
+    explicit DecoderLayer(DecoderLayerParam<T, DIM, D_H, HEAD_SIZE> &p) {
+        norm1 = new LayerNorm<T, DIM>(p.norm1_p);
+        attention1 = new MultiHeadAttention<T, DIM, DEP, HEAD_SIZE>(p.attention1_p);
+        dropout1 = new Dropout<T, DIM>(p.dropout_rate1);
+        norm2 = new LayerNorm<T, DIM>(p.norm2_p);
+        attention2 = new MultiHeadAttention<T, DIM, DEP, HEAD_SIZE>(p.attention2_p);
+        norm3 = new LayerNorm<T, DIM>(p.norm3_p);
+        ff = new FeedForwardNetwork<T, DIM, DIM, D_H>(p.ff_p);
+        dropout2 = new Dropout<T, DIM>(p.dropout_rate2);
     }
 
     ~DecoderLayer() {
@@ -64,34 +53,29 @@ public:
         delete dropout2;
     }
 
-    void load_params(DecoderLayerParam<T, DIM, D_H, HEAD_SIZE> *p) {
-        if (p != nullptr) {
-            norm1->load_params(p->norm1_p);
-            attention1->load_params(p->attention1_p);
-            if (p->dropout_rate1 != nullptr) {
-                dropout1->load_params(*(p->dropout_rate1));
-            }
-            norm2->load_params(p->norm2_p);
-            attention2->load_params(p->attention2_p);
-            norm3->load_params(p->norm3_p);
-            ff->load_params(p->ff_p);
-            if (p->dropout_rate2 != nullptr) {
-                dropout2->load_params(*(p->dropout_rate2));
-            }
+
+    void forward(array<array<T, DIM>, DEP>& input, array<array<T, DIM>, DEP>& enc_output, array<array<T, DIM>, DEP>& output) {
+        array<array<T, DIM>, DEP> tmp[7];
+        for (int i = 0; i < DEP; ++i) {
+            norm1->forward(input[i], tmp[0][i]);
         }
-
-    }
-
-    void forward(T input[DEP][DIM], T enc_output[DEP][DIM], T output[DEP][DIM]) {
-        T tmp[7][DEP][DIM];
-        norm1->forward(input, tmp[0]);
         attention1->forward(tmp[0], tmp[0], tmp[0], tmp[1]);
-        dropout1->forward(tmp[1], tmp[2]);
-        norm2->forward(tmp[2], tmp[3]);
+        for (int i = 0; i < DEP; ++i) {
+            dropout1->forward(tmp[1][i], tmp[2][i]);
+        }
+        for (int i = 0; i < DEP; ++i) {
+            norm2->forward(tmp[2][i], tmp[3][i]);
+        }
         attention2->forward(tmp[3], enc_output, enc_output, tmp[4]);
-        norm3->forward(tmp[4], tmp[5]);
-        ff->forward(tmp[5], tmp[6]);
-        dropout2->forward(tmp[6], output);
+        for (int i = 0; i < DEP; ++i) {
+            norm3->forward(tmp[4][i], tmp[5][i]);
+        }
+        for (int i = 0; i < DEP; ++i) {
+            ff->forward(tmp[5][i], tmp[6][i]);
+        }
+        for (int i = 0; i < DEP; ++i) {
+            dropout2->forward(tmp[6][i], output[i]);
+        }
     }
 
 private:

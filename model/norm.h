@@ -2,12 +2,17 @@
 #define __MODEL_LAYERNORM_H__
 
 #include <cstring>
+#include <cmath>
+#include <array>
+
+using std::array;
 
 template<typename T, int DIM>
 struct LayerNormParam {
-    T weights[DIM];
-    T bias[DIM];
-    long long count(){
+    array<T, DIM> weights;
+    array<T, DIM> bias;
+
+    long long count() {
         return DIM * 2;
     }
 };
@@ -15,21 +20,11 @@ struct LayerNormParam {
 template<typename T, int DIM>
 class LayerNorm {
 public:
-    LayerNorm() {
-
+    explicit LayerNorm(LayerNormParam<T, DIM> &p) {
+        this->params = &p;
     }
 
-    ~LayerNorm() {
-
-    }
-
-    void load_params(LayerNormParam<T, DIM> *p) {
-        if (p != nullptr) {
-            this->params = p;
-        }
-    }
-
-    void forward(T input[DIM], T output[DIM]) {
+    void forward(array<T, DIM> &input, array<T, DIM> &output) {
         T sum = 0;
         T sum2 = 0;
         for (int i = 0; i < DIM; ++i) {

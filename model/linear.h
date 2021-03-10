@@ -1,11 +1,16 @@
 #ifndef __MODEL_LINEAR_H__
 #define __MODEL_LINEAR_H__
 
+#include <array>
+
+using std::array;
+
 template<typename T, int D_I, int D_O>
 struct LinearParam {
-    T weights[D_I][D_O];
-    T bias[D_O];
-    long long count(){
+    array<array<T, D_O>, D_I> weights;
+    array<T, D_O> bias;
+
+    long long count() {
         long long ret = 0;
         ret += D_I * D_O + D_O;
         return ret;
@@ -15,23 +20,13 @@ struct LinearParam {
 template<typename T, int D_I, int D_O>
 class Linear {
 public:
-    Linear() {
-
+    explicit Linear(LinearParam<T, D_I, D_O> &p) {
+        this->params = &p;
     }
 
-    ~Linear() {
-
-    }
-
-    void load_params(LinearParam<T, D_I, D_O> *p) {
-        if (p != nullptr) {
-            this->params = p;
-        }
-    }
-
-    void forward(T input[D_I], T output[D_O]) {
-        memcpy(output, this->params->bias, sizeof(T) * D_O);
+    void forward(array<T, D_I> &input, array<T, D_O> &output) {
         for (int j = 0; j < D_O; ++j) {
+            output[j] = this->params->bias[j];
             for (int i = 0; i < D_I; ++i) {
                 output[j] += input[i] * this->params->weights[i][j];
             }

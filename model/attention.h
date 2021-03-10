@@ -9,29 +9,16 @@
 
 template<typename T, int DIM, int H>
 struct MultiHeadAttentionParam {
-    LinearParam<T, DIM, DIM> *linear_q_p[H], *linear_k_p[H], *linear_v_p[H];
-    LinearParam<T, DIM * H, DIM> *linear_p;
-    T *dropout_rate;
+    LinearParam<T, DIM, DIM> linear_q_p[H], linear_k_p[H], linear_v_p[H];
+    LinearParam<T, DIM * H, DIM> linear_p;
+    T dropout_rate;
 
     MultiHeadAttentionParam() {
-        for (int i = 0; i < H; ++i) {
-            linear_q_p[i] = new LinearParam<T, DIM, DIM>();
-            linear_k_p[i] = new LinearParam<T, DIM, DIM>();
-            linear_v_p[i] = new LinearParam<T, DIM, DIM>();
-        }
-        linear_p = new LinearParam<T, DIM * H, DIM>();
+        dropout_rate = 0.1;
     }
 
-    ~MultiHeadAttentionParam() {
-        for (int i = 0; i < H; ++i) {
-            delete linear_q_p[i];
-            delete linear_k_p[i];
-            delete linear_v_p[i];
-        }
-        delete linear_p;
-    }
-    long long count(){
-        return linear_k_p[0]->count() * H * 3 + linear_p->count();
+    long long count() {
+        return linear_k_p[0].count() * H * 3 + linear_p.count();
     }
 };
 
@@ -39,40 +26,22 @@ struct MultiHeadAttentionParam {
 template<typename T, int DIM, int DEP, int H>
 class MultiHeadAttention {
 public:
-    MultiHeadAttention() {
+    explicit MultiHeadAttention(MultiHeadAttentionParam<T, DIM, H> &p) {
         for (int i = 0; i < H; ++i) {
-            linear_q[i] = new Linear<T, DIM, DIM>();
-            linear_k[i] = new Linear<T, DIM, DIM>();
-            linear_v[i] = new Linear<T, DIM, DIM>();
+            linear_q[i] = new Linear<T, DIM, DIM>(p.linear_q_p[i]);
+            linear_k[i] = new Linear<T, DIM, DIM>(p.linear_k_p[i]);
+            linear_v[i] = new Linear<T, DIM, DIM>(p.linear_v_p[i]);
         }
-        linear = new Linear<T, DIM * H, DIM>();
-        dropout = new Dropout<T, DIM>();
+        linear = new Linear<T, DIM * H, DIM>(p.linear_p);
+        dropout = new Dropout<T, DIM>(p.dropout_rate);
         this->scale = 1.0 / sqrt((DIM / H) * 1.0);
     }
 
-    void load_params(MultiHeadAttentionParam<T, DIM, H> *p) {
-        for (int i = 0; i < H; ++i) {
-            if (p->linear_q_p[i] != nullptr) {
-                linear_q[i]->load_params(p->linear_q_p[i]);
-
-            }
-            if (p->linear_k_p[i] != nullptr) {
-                linear_k[i]->load_params(p->linear_k_p[i]);
-            }
-            if (p->linear_v_p[i] != nullptr) {
-                linear_v[i]->load_params(p->linear_v_p[i]);
-            }
-        }
-        if (p->linear_p != nullptr) {
-            linear->load_params(p->linear_p);
-        }
-        if (p->dropout_rate != nullptr) {
-            dropout->load_params(*(p->dropout_rate));
-        }
-    }
-
-    void forward(T q_in[DEP][DIM], T k_in[DEP][DIM], T v_in[DEP][DIM], T output[DEP][DIM]) {
-        T q_tmp[H][DEP][DIM], k_tmp[H][DEP][DIM], v_tmp[H][DEP][DIM];
+    void forward(array<array<T, DIM>, DEP> &q_in,
+                 array<array<T, DIM>, DEP> &k_in,
+                 array<array<T, DIM>, DEP> &v_in,
+                 array<array<T, DIM>, DEP> &output) {
+        array<array<array<T, DIM>, DEP>, H> q_tmp, k_tmp, v_tmp;
         for (int i = 0; i < H; ++i) {
             for (int j = 0; j < DEP; ++j) {
                 linear_q[i]->forward(q_in[j], q_tmp[i][j]);
@@ -87,7 +56,7 @@ public:
             }
         }
         // Attention(Q, K, V) = softmax(QK^T/sqrt(d_k))V
-        T nex_tmp[H][DEP][DEP];
+        array<array<array<T, DEP>, DEP>, H> nex_tmp;
         for (int h = 0; h < H; ++h) {
             for (int i = 0; i < DEP; ++i) {
                 for (int j = 0; j < DEP; ++j) {
@@ -99,7 +68,7 @@ public:
             }
             softmax<T, DEP, DEP>(nex_tmp[h]);
         }
-        T f_tmp[H][DEP][DIM];
+        array<array<array<T, DIM>, DEP>, H> f_tmp;
         for (int h = 0; h < H; ++h) {
             for (int i = 0; i < DEP; ++i) {
                 for (int j = 0; j < DIM; ++j) {
@@ -111,7 +80,7 @@ public:
             }
         }
         // Concat
-        T f_nex_tmp[DEP][DIM * H];
+        array<array<T, DIM * H>, DEP> f_nex_tmp;
         for (int h = 0; h < H; ++h) {
             for (int i = 0; i < DEP; ++i) {
                 for (int j = 0; j < DIM; ++j) {
@@ -120,7 +89,7 @@ public:
             }
         }
         for (int i = 0; i < DEP; ++i) {
-            linear->forward(f_nex_tmp, output);
+            linear->forward(f_nex_tmp[i], output[i]);
         }
     }
 

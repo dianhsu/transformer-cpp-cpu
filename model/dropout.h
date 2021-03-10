@@ -1,6 +1,10 @@
 #ifndef __MODEL_DROPOUT_H__
 #define __MODEL_DROPOUT_H__
 
+#include <array>
+
+using std::array;
+
 template<typename T, int DIM>
 class Dropout {
 public:
@@ -8,11 +12,12 @@ public:
         this->dropout_rate = 0.1;
     }
 
-    void load_params(T dr) {
+    explicit Dropout(T dr) {
         this->dropout_rate = dr;
     }
 
-    void forward(T input[DIM], T output[DIM]) {
+
+    void forward(array<T, DIM> &input, array<T, DIM> &output) {
         for (int i = 0; i < DIM; ++i) {
             if (input[i] < this->dropout_rate) {
                 output[i] = 0;
@@ -22,7 +27,7 @@ public:
         }
     }
 
-    void forward(T input[DIM]) {
+    void forward(array<T, DIM> &input) {
         for (int i = 0; i < DIM; ++i) {
             if (input[i] < this->dropout_rate) {
                 input[i] = 0;

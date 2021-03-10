@@ -4,7 +4,7 @@
 template<typename T, int DIM>
 class Relu {
 public:
-    void forward(T input[DIM], T output[DIM]) {
+    void forward(array<T, DIM> &input, array<T, DIM> &output) {
         for (int i = 0; i < DIM; ++i) {
             if (input[i] < 0) {
                 output[i] = 0;
@@ -14,7 +14,7 @@ public:
         }
     }
 
-    void forward(T input[DIM]) {
+    void forward(array<T, DIM> &input) {
         for (int i = 0; i < DIM; ++i) {
             if (input[i] < 0) {
                 input[i] = 0;
