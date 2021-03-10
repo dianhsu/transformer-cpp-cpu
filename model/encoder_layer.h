@@ -49,32 +49,32 @@ public:
     }
 
     void forward(const array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
-        auto *tmp = new array<array<array<T, DIM>, DEP>, 4>{};
+        auto tmp = array<array<array<T, DIM>, DEP>, 4>{};
         for (int i = 0; i < DEP; ++i) {
-            norm1->forward(input[i], (*tmp)[0][i]);
+            norm1->forward(input[i], tmp[0][i]);
         }
-        attention->forward((*tmp)[0], (*tmp)[0], (*tmp)[0], (*tmp)[1]);
+        attention->forward(tmp[0], tmp[0], tmp[0], tmp[1]);
         for (int i = 0; i < DEP; ++i) {
-            dropout1->forward((*tmp)[1][i]);
+            dropout1->forward(tmp[1][i]);
         }
         for (int i = 0; i < DEP; ++i) {
             for (int j = 0; j < DIM; ++j) {
-                (*tmp)[1][i][j] += input[i][j];
+                tmp[1][i][j] += input[i][j];
             }
         }
 
         for (int i = 0; i < DEP; ++i) {
-            norm2->forward((*tmp)[1][i], (*tmp)[2][i]);
+            norm2->forward(tmp[1][i], tmp[2][i]);
         }
         for (int i = 0; i < DEP; ++i) {
-            ff->forward((*tmp)[2][i], (*tmp)[3][i]);
+            ff->forward(tmp[2][i], tmp[3][i]);
         }
         for (int i = 0; i < DEP; ++i) {
-            dropout2->forward((*tmp)[3][i]);
+            dropout2->forward(tmp[3][i]);
         }
         for (int i = 0; i < DEP; ++i) {
             for (int j = 0; j < DIM; ++j) {
-                output[i][j] = input[i][j] + (*tmp)[3][i][j];
+                output[i][j] = input[i][j] + tmp[3][i][j];
             }
         }
         delete tmp;
