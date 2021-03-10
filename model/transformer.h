@@ -18,7 +18,7 @@ struct TransformerParam {
 template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int ENC_LAYER_CNT, int DEC_LAYER_CNT>
 class Transformer {
 public:
-    Transformer(TransformerParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT> &p) {
+    explicit Transformer(TransformerParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT> &p) {
         encoder = new Encoder<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT>(p.encoder_p);
         decoder = new Decoder<T, DIM, DEP, D_H, HEAD_SIZE, DEC_LAYER_CNT>(p.decoder_p);
     }
@@ -30,9 +30,9 @@ public:
 
 
     void forward(const array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
-        array<array<T, DIM>, DEP> tmp;
-        encoder->forward(input, tmp);
-        decoder->forward(tmp, tmp, output);
+        auto *tmp = new array<array<T, DIM>, DEP>{};
+        encoder->forward(input, *tmp);
+        decoder->forward(*tmp, *tmp, output);
     }
 
 private:

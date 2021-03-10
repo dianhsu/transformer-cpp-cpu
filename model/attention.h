@@ -49,9 +49,9 @@ public:
                  const array<array<T, DIM>, DEP> &k_in,
                  const array<array<T, DIM>, DEP> &v_in,
                  array<array<T, DIM>, DEP> &output) {
-        auto *q_tmp = new array<array<array<T, DIM>, DEP>, H>();
-        auto *k_tmp = new array<array<array<T, DIM>, DEP>, H>();
-        auto *v_tmp = new array<array<array<T, DIM>, DEP>, H>();
+        auto *q_tmp = new array<array<array<T, DIM>, DEP>, H>{};
+        auto *k_tmp = new array<array<array<T, DIM>, DEP>, H>{};
+        auto *v_tmp = new array<array<array<T, DIM>, DEP>, H>{};
         for (int i = 0; i < H; ++i) {
             for (int j = 0; j < DEP; ++j) {
                 linear_q[i]->forward(q_in[j], (*q_tmp)[i][j]);
@@ -66,7 +66,7 @@ public:
             }
         }
         // Attention(Q, K, V) = softmax(QK^T/sqrt(d_k))V
-        auto *nex_tmp = new array<array<array<T, DEP>, DEP>, H>();
+        auto *nex_tmp = new array<array<array<T, DEP>, DEP>, H>{};
         for (int h = 0; h < H; ++h) {
             for (int i = 0; i < DEP; ++i) {
                 for (int j = 0; j < DEP; ++j) {
@@ -78,7 +78,7 @@ public:
             }
             softmax<T, DEP, DEP>((*nex_tmp)[h]);
         }
-        auto *f_tmp = new array<array<array<T, DIM>, DEP>, H>();
+        auto *f_tmp = new array<array<array<T, DIM>, DEP>, H>{};
         for (int h = 0; h < H; ++h) {
             for (int i = 0; i < DEP; ++i) {
                 for (int j = 0; j < DIM; ++j) {
@@ -90,7 +90,7 @@ public:
             }
         }
         // Concat
-        auto *f_nex_tmp = new array<array<T, DIM * H>, DEP>();
+        auto *f_nex_tmp = new array<array<T, DIM * H>, DEP>{};
         for (int h = 0; h < H; ++h) {
             for (int i = 0; i < DEP; ++i) {
                 for (int j = 0; j < DIM; ++j) {

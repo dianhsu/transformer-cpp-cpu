@@ -57,7 +57,7 @@ public:
     void forward(const array<array<T, DIM>, DEP> &input,
                  const array<array<T, DIM>, DEP> &enc_output,
                  array<array<T, DIM>, DEP> &output) {
-        auto *tmp = new array<array<array<T, DIM>, DEP>, 7>();
+        auto *tmp = new array<array<array<T, DIM>, DEP>, 7>{};
         for (int i = 0; i < DEP; ++i) {
             norm1->forward(input[i], (*tmp)[0][i]);
         }
