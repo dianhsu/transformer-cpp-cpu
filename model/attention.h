@@ -36,60 +36,69 @@ public:
         dropout = new Dropout<T, DIM>(p.dropout_rate);
         this->scale = 1.0 / sqrt((DIM / H) * 1.0);
     }
+
     void forward(const array<array<T, DIM>, DEP> &q_in,
                  const array<array<T, DIM>, DEP> &k_in,
                  const array<array<T, DIM>, DEP> &v_in,
                  array<array<T, DIM>, DEP> &output) {
-        array<array<array<T, DIM>, DEP>, H> q_tmp, k_tmp, v_tmp;
+        auto *q_tmp = new array<array<array<T, DIM>, DEP>, H>();
+        auto *k_tmp = new array<array<array<T, DIM>, DEP>, H>();
+        auto *v_tmp = new array<array<array<T, DIM>, DEP>, H>();
         for (int i = 0; i < H; ++i) {
             for (int j = 0; j < DEP; ++j) {
-                linear_q[i]->forward(q_in[j], q_tmp[i][j]);
-                linear_k[i]->forward(k_in[j], k_tmp[i][j]);
-                linear_v[i]->forward(v_in[j], v_tmp[i][j]);
-                dropout->forward(q_tmp[i][j]);
-                dropout->forward(k_tmp[i][j]);
-                dropout->forward(v_tmp[i][j]);
+                linear_q[i]->forward(q_in[j], (*q_tmp)[i][j]);
+                linear_k[i]->forward(k_in[j], (*k_tmp)[i][j]);
+                linear_v[i]->forward(v_in[j], (*v_tmp)[i][j]);
+                dropout->forward((*q_tmp)[i][j]);
+                dropout->forward((*k_tmp)[i][j]);
+                dropout->forward((*v_tmp)[i][j]);
                 for (int k = 0; k < DIM; ++k) {
-                    q_tmp[i][j][k] *= this->scale;
+                    (*q_tmp)[i][j][k] *= this->scale;
                 }
             }
         }
         // Attention(Q, K, V) = softmax(QK^T/sqrt(d_k))V
-        array<array<array<T, DEP>, DEP>, H> nex_tmp;
+        auto *nex_tmp = new array<array<array<T, DEP>, DEP>, H>();
         for (int h = 0; h < H; ++h) {
             for (int i = 0; i < DEP; ++i) {
                 for (int j = 0; j < DEP; ++j) {
-                    nex_tmp[h][i][j] = 0;
+                    (*nex_tmp)[h][i][j] = 0;
                     for (int k = 0; k < DIM; ++k) {
-                        nex_tmp[h][i][j] += q_tmp[h][i][k] * k_tmp[h][j][k];
+                        (*nex_tmp)[h][i][j] += (*q_tmp)[h][i][k] * (*k_tmp)[h][j][k];
                     }
                 }
             }
-            softmax<T, DEP, DEP>(nex_tmp[h]);
+            softmax<T, DEP, DEP>((*nex_tmp)[h]);
         }
-        array<array<array<T, DIM>, DEP>, H> f_tmp;
+        auto *f_tmp = new array<array<array<T, DIM>, DEP>, H>();
         for (int h = 0; h < H; ++h) {
             for (int i = 0; i < DEP; ++i) {
                 for (int j = 0; j < DIM; ++j) {
-                    f_tmp[h][i][j] = 0;
+                    (*f_tmp)[h][i][j] = 0;
                     for (int k = 0; k < DEP; ++k) {
-                        f_tmp[h][i][j] += nex_tmp[h][i][k] * nex_tmp[h][j][k];
+                        (*f_tmp)[h][i][j] += (*nex_tmp)[h][i][k] * (*nex_tmp)[h][j][k];
                     }
                 }
             }
         }
         // Concat
-        array<array<T, DIM * H>, DEP> f_nex_tmp;
+        auto *f_nex_tmp = new array<array<T, DIM * H>, DEP>();
         for (int h = 0; h < H; ++h) {
             for (int i = 0; i < DEP; ++i) {
                 for (int j = 0; j < DIM; ++j) {
-                    f_nex_tmp[i][h * H + j] = f_tmp[h][i][j];
+                    (*f_nex_tmp)[i][h * H + j] = (*f_tmp)[h][i][j];
                 }
             }
         }
         for (int i = 0; i < DEP; ++i) {
-            linear->forward(f_nex_tmp[i], output[i]);
+            linear->forward((*f_nex_tmp)[i], output[i]);
         }
+        delete q_tmp;
+        delete k_tmp;
+        delete v_tmp;
+        delete f_tmp;
+        delete f_nex_tmp;
+        delete nex_tmp;
     }
 
 private:

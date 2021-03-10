@@ -40,11 +40,12 @@ public:
     }
 
     void forward(const array<T, D_I> &input, array<T, D_O> &output) {
-        array<array<T, D_H>, 3> tmp;
-        linear1->forward(input, tmp[0]);
-        relu->forward(tmp[0], tmp[1]);
-        dropout->forward(tmp[1], tmp[2]);
-        linear2->forward(tmp[2], output);
+        auto *tmp = new array<array<T, D_H>, 3>();
+        linear1->forward(input, (*tmp)[0]);
+        relu->forward((*tmp)[0], (*tmp)[1]);
+        dropout->forward((*tmp)[1], (*tmp)[2]);
+        linear2->forward((*tmp)[2], output);
+        delete tmp;
     }
 
 private:

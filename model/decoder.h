@@ -35,18 +35,18 @@ public:
     void forward(const array<array<T, DIM>, DEP> &input,
                  const array<array<T, DIM>, DEP> &enc_output,
                  array<array<T, DIM>, DEP> &output) {
-        array<array<array<T, DIM>, DEP>, LAYER_CNT> tmp;
+        auto *tmp = new array<array<array<T, DIM>, DEP>, LAYER_CNT>();
         for (int i = 0; i < LAYER_CNT; ++i) {
             if (i == 0) {
-                layers[0]->forward(input, enc_output, tmp[0]);
+                layers[0]->forward(input, enc_output, (*tmp)[0]);
             } else {
-                layers[i]->forward(tmp[i - 1], enc_output, tmp[i]);
+                layers[i]->forward((*tmp)[i - 1], enc_output, (*tmp)[i]);
             }
         }
         for (int i = 0; i < DEP; ++i) {
-            norm->forward(tmp[LAYER_CNT - 1][i], output[i]);
+            norm->forward((*tmp)[LAYER_CNT - 1][i], output[i]);
         }
-
+        delete tmp;
     }
 
 private:
