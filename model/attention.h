@@ -36,10 +36,9 @@ public:
         dropout = new Dropout<T, DIM>(p.dropout_rate);
         this->scale = 1.0 / sqrt((DIM / H) * 1.0);
     }
-
-    void forward(array<array<T, DIM>, DEP> &q_in,
-                 array<array<T, DIM>, DEP> &k_in,
-                 array<array<T, DIM>, DEP> &v_in,
+    void forward(const array<array<T, DIM>, DEP> &q_in,
+                 const array<array<T, DIM>, DEP> &k_in,
+                 const array<array<T, DIM>, DEP> &v_in,
                  array<array<T, DIM>, DEP> &output) {
         array<array<array<T, DIM>, DEP>, H> q_tmp, k_tmp, v_tmp;
         for (int i = 0; i < H; ++i) {

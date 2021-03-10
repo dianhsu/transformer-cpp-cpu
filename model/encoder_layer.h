@@ -38,7 +38,8 @@ public:
         ff = new FeedForwardNetwork<T, DIM, DIM, D_H>(p.ff_p);
         dropout2 = new Dropout<T, DIM>(p.dropout_rate2);
     }
-    ~EncoderLayer(){
+
+    ~EncoderLayer() {
         delete norm1;
         delete attention;
         delete dropout1;
@@ -46,35 +47,34 @@ public:
         delete ff;
         delete dropout2;
     }
-    void forward(array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
-        array<array<T, DIM>, DEP> i_tmp;
+
+    void forward(const array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
+        array<array<T, DIM>, DEP> tmp[4];
         for (int i = 0; i < DEP; ++i) {
-            norm1->forward(input[i], i_tmp[i]);
+            norm1->forward(input[i], tmp[0][i]);
         }
-        array<array<T, DIM>, DEP> nex_tmp;
-        attention->forward(i_tmp, i_tmp, i_tmp, nex_tmp);
+        attention->forward(tmp[0], tmp[0], tmp[0], tmp[1]);
         for (int i = 0; i < DEP; ++i) {
-            dropout1->forward(nex_tmp[i]);
+            dropout1->forward(tmp[1][i]);
         }
         for (int i = 0; i < DEP; ++i) {
             for (int j = 0; j < DIM; ++j) {
-                nex_tmp[i][j] += input[i][j];
+                tmp[1][i][j] += input[i][j];
             }
         }
-        array<array<T, DIM>, DEP> nex2_tmp;
+
         for (int i = 0; i < DEP; ++i) {
-            norm2->forward(nex_tmp[i], nex2_tmp[i]);
-        }
-        array<array<T, DIM>, DEP> nex3_tmp;
-        for (int i = 0; i < DEP; ++i) {
-            ff->forward(nex2_tmp[i], nex3_tmp[i]);
+            norm2->forward(tmp[1][i], tmp[2][i]);
         }
         for (int i = 0; i < DEP; ++i) {
-            dropout2->forward(nex3_tmp[i]);
+            ff->forward(tmp[2][i], tmp[3][i]);
+        }
+        for (int i = 0; i < DEP; ++i) {
+            dropout2->forward(tmp[3][i]);
         }
         for (int i = 0; i < DEP; ++i) {
             for (int j = 0; j < DIM; ++j) {
-                output[i][j] = input[i][j] + nex3_tmp[i][j];
+                output[i][j] = input[i][j] + tmp[3][i][j];
             }
         }
     }

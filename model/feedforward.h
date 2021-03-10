@@ -17,7 +17,7 @@ struct FeedForwardNetworkParam {
         dropout_rate = 0.1;
     }
 
-    long long count(){
+    long long count() {
         return linear_p1.count() + linear_p2.count();
     }
 };
@@ -39,7 +39,7 @@ public:
         delete linear2;
     }
 
-    void forward(array<T, D_I> &input, array<T, D_O> &output) {
+    void forward(const array<T, D_I> &input, array<T, D_O> &output) {
         array<array<T, D_H>, 3> tmp;
         linear1->forward(input, tmp[0]);
         relu->forward(tmp[0], tmp[1]);

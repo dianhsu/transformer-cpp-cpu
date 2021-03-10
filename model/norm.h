@@ -24,7 +24,7 @@ public:
         this->params = &p;
     }
 
-    void forward(array<T, DIM> &input, array<T, DIM> &output) {
+    void forward(const array<T, DIM> &input, array<T, DIM> &output) {
         T sum = 0;
         T sum2 = 0;
         for (int i = 0; i < DIM; ++i) {

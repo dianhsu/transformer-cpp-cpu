@@ -29,7 +29,7 @@ public:
     }
 
 
-    void forward(array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
+    void forward(const array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
         array<array<T, DIM>, DEP> tmp;
         encoder->forward(input, tmp);
         decoder->forward(tmp, tmp, output);

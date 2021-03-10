@@ -32,7 +32,7 @@ public:
         delete norm;
     }
 
-    void forward(array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
+    void forward(const array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
         array<array<array<T, DIM>, DEP>, LAYER_CNT> tmp;
         for (int i = 0; i < LAYER_CNT; ++i) {
             if (i == 0) {

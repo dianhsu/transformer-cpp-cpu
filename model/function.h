@@ -2,7 +2,7 @@
 #define __MODEL_FUNCTION_H__
 
 template<typename T, int DIM, int DEP>
-void softmax(array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
+void softmax(const array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
     for (int j = 0; j < DIM; ++j) {
         T tmp = 0;
         for (int i = 0; i < DEP; ++i) {
