@@ -30,12 +30,9 @@ public:
 
 
     void forward(const array<array<T, DIM>, DEP> &input, array<array<T, DIM>, DEP> &output) {
-        auto *tmp = new array<array<T, DIM>, DEP>{};
-        for(int i = 0; i < DEP; ++i){
-            (*tmp)[i].fill(0);
-        }
-        encoder->forward(input, *tmp);
-        decoder->forward(*tmp, *tmp, output);
+        auto tmp = array<array<T, DIM>, DEP>{};
+        encoder->forward(input, tmp);
+        decoder->forward(tmp, tmp, output);
     }
 
 private:
