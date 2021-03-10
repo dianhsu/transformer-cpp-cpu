@@ -36,7 +36,15 @@ public:
         dropout = new Dropout<T, DIM>(p.dropout_rate);
         this->scale = 1.0 / sqrt((DIM / H) * 1.0);
     }
-
+    ~MultiHeadAttention(){
+        for(int i = 0; i < H; ++i){
+            delete linear_q[i];
+            delete linear_k[i];
+            delete linear_v[i];
+        }
+        delete linear;
+        delete dropout;
+    }
     void forward(const array<array<T, DIM>, DEP> &q_in,
                  const array<array<T, DIM>, DEP> &k_in,
                  const array<array<T, DIM>, DEP> &v_in,
@@ -76,7 +84,7 @@ public:
                 for (int j = 0; j < DIM; ++j) {
                     (*f_tmp)[h][i][j] = 0;
                     for (int k = 0; k < DEP; ++k) {
-                        (*f_tmp)[h][i][j] += (*nex_tmp)[h][i][k] * (*nex_tmp)[h][j][k];
+                        (*f_tmp)[h][i][j] += (*nex_tmp)[h][i][k] * (*v_tmp)[h][j][k];
                     }
                 }
             }
