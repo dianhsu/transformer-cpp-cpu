@@ -57,28 +57,27 @@ public:
     void forward(const array<array<T, DIM>, DEP> input,
                  const array<array<T, DIM>, DEP> enc_output,
                  array<array<T, DIM>, DEP> &output) {
-        auto *tmp = new array<array<array<T, DIM>, DEP>, 7>{};
+        auto tmp = array<array<array<T, DIM>, DEP>, 7>{};
         for (int i = 0; i < DEP; ++i) {
-            norm1->forward(input[i], (*tmp)[0][i]);
+            norm1->forward(input.at(i), tmp.at(0).at(i));
         }
-        attention1->forward((*tmp)[0], (*tmp)[0], (*tmp)[0], (*tmp)[1]);
+        attention1->forward(tmp.at(0), tmp.at(0), tmp.at(0), tmp.at(0));
         for (int i = 0; i < DEP; ++i) {
-            dropout1->forward((*tmp)[1][i], (*tmp)[2][i]);
-        }
-        for (int i = 0; i < DEP; ++i) {
-            norm2->forward((*tmp)[2][i], (*tmp)[3][i]);
-        }
-        attention2->forward((*tmp)[3], enc_output, enc_output, (*tmp)[4]);
-        for (int i = 0; i < DEP; ++i) {
-            norm3->forward((*tmp)[4][i], (*tmp)[5][i]);
+            dropout1->forward(tmp.at(1).at(i), tmp.at(2).at(i));
         }
         for (int i = 0; i < DEP; ++i) {
-            ff->forward((*tmp)[5][i], (*tmp)[6][i]);
+            norm2->forward(tmp.at(2).at(i), tmp.at(3).at(i));
+        }
+        attention2->forward(tmp.at(3), enc_output, enc_output, tmp.at(4));
+        for (int i = 0; i < DEP; ++i) {
+            norm3->forward(tmp.at(4).at(i), tmp.at(5).at(i));
         }
         for (int i = 0; i < DEP; ++i) {
-            dropout2->forward((*tmp)[6][i], output[i]);
+            ff->forward(tmp.at(5).at(i), tmp.at(6).at(i));
         }
-        delete tmp;
+        for (int i = 0; i < DEP; ++i) {
+            dropout2->forward(tmp.at(6).at(i), output.at(i));
+        }
     }
 
 private:
