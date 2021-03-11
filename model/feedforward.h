@@ -1,58 +1,45 @@
-#ifndef __MODEL_FEEDFORWARD_H__
-#define __MODEL_FEEDFORWARD_H__
+//
+// Created by dianhsu on 2021/03/10.
+//
 
-#include <cstring>
+#ifndef TRANSFORMER_FEEDFORWARD_H
+#define TRANSFORMER_FEEDFORWARD_H
 
-#include "dropout.h"
+#include <array>
+
 #include "linear.h"
+#include "dropout.h"
 #include "relu.h"
 
-template<typename T, int D_I, int D_O, int D_H>
-struct FeedForwardNetworkParam {
-    LinearParam<T, D_I, D_H> linear_p1;
-    LinearParam<T, D_H, D_O> linear_p2;
-    T dropout_rate;
+namespace transformer {
+    template<typename T, int DIM_IN, int DIM_OUT, int DIM_HID>
+    struct FeedForwardNetworkParameter {
+        LinearParameter<T, DIM_IN, DIM_HID> linear_p1;
+        LinearParameter<T, DIM_HID, DIM_OUT> linear_p2;
+        T dr;
 
-    FeedForwardNetworkParam() {
-        dropout_rate = 0.1;
-    }
+        FeedForwardNetworkParameter() {
+            this->dr = 0.1;
+        }
 
-    long long count() {
-        return linear_p1.count() + linear_p2.count();
-    }
-};
+        long long count() {
+            return linear_p1.count() + linear_p2.count();
+        }
+    };
 
-template<typename T, int D_I, int D_O, int D_H>
-class FeedForwardNetwork {
-public:
-    explicit FeedForwardNetwork(FeedForwardNetworkParam<T, D_I, D_O, D_H> &param) {
-        linear1 = new Linear<T, D_I, D_H>(param.linear_p1);
-        relu = new Relu<T, D_H>();
-        dropout = new Dropout<T, D_H>(param.dropout_rate);
-        linear2 = new Linear<T, D_H, D_I>(param.linear_p2);
-    }
+    template<typename T, int DIM_IN, int DIM_OUT, int DIM_HID>
+    class FeedForwardNetwork {
+    public:
+        static void forward(std::array<T, DIM_IN> &input,
+                            std::array<T, DIM_OUT> &output,
+                            FeedForwardNetworkParameter<T, DIM_IN, DIM_OUT, DIM_HID> &ff_p) {
+            auto tmp = std::array<std::array<T, DIM_HID>, 3>{};
+            Linear<T, DIM_IN, DIM_HID>::forward(input, tmp[0], ff_p.linear_p1);
+            Relu<T, DIM_HID>::forward(tmp[0], tmp[1]);
+            Dropout<T, DIM_HID>::forward(tmp[1], tmp[2], ff_p.dr);
+            Linear<T, DIM_HID, DIM_OUT>::forward(tmp[2], output, ff_p.linear_p2);
+        }
+    };
 
-    ~FeedForwardNetwork() {
-        delete linear1;
-        delete relu;
-        delete dropout;
-        delete linear2;
-    }
-
-    void forward(const array<T, D_I> input, array<T, D_O> &output) {
-        auto tmp = array<array<T, D_H>, 3>{};
-        linear1->forward(input, tmp[0]);
-        relu->forward(tmp[0], tmp[1]);
-        dropout->forward(tmp[1], tmp[2]);
-        linear2->forward(tmp[2], output);
-    }
-
-private:
-    Linear<T, D_I, D_H> *linear1;
-    Relu<T, D_H> *relu;
-    Dropout<T, D_H> *dropout;
-    Linear<T, D_H, D_O> *linear2;
-};
-
-
-#endif
+}
+#endif //TRANSFORMER_FEEDFORWARD_H

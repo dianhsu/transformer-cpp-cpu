@@ -1,55 +1,42 @@
-#ifndef __MODEL_ENCODER_H__
-#define __MODEL_ENCODER_H__
+//
+// Created by dianhsu on 2021/03/10.
+//
 
+#ifndef TRANSFORMER_ENCODER_H
+#define TRANSFORMER_ENCODER_H
+
+#include <array>
 #include "encoder_layer.h"
-#include "norm.h"
 
-template<typename T, int DIM, int D_H, int HEAD_SIZE, int LAYER_CNT>
-struct EncoderParam {
-    array<EncoderLayerParam<T, DIM, D_H, HEAD_SIZE>, LAYER_CNT> layers_p;
-    LayerNormParam<T, DIM> norm_p;
+namespace transformer {
+    template<typename T, int DIM, int DIM_HID, int HEAD_SIZE, int LAYER_CNT>
+    struct EncoderParameter {
+        std::array<EncoderLayerParameter<T, DIM, DIM_HID, HEAD_SIZE>, LAYER_CNT> layers_p;
+        LayerNormParameter<T, DIM> norm_p;
 
-
-    long long count() {
-        return layers_p[0].count() * LAYER_CNT + norm_p.count();
-    }
-};
-
-template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int LAYER_CNT>
-class Encoder {
-public:
-    explicit Encoder(EncoderParam<T, DIM, D_H, HEAD_SIZE, LAYER_CNT> &p) {
-        for (int i = 0; i < LAYER_CNT; ++i) {
-            layers[i] = new EncoderLayer<T, DIM, DEP, D_H, HEAD_SIZE>(p.layers_p[i]);
+        long long count() {
+            return layers_p[0].count() * LAYER_CNT + norm_p.count();
         }
-        norm = new LayerNorm<T, DIM>(p.norm_p);
-    }
+    };
 
-    ~Encoder() {
-        for (int i = 0; i < LAYER_CNT; ++i) {
-            delete layers[i];
-        }
-        delete norm;
-    }
-
-    void forward(const array<array<T, DIM>, DEP> input, array<array<T, DIM>, DEP> &output) {
-        auto *tmp = new array<array<array<T, DIM>, DEP>, LAYER_CNT>{};
-        for (int i = 0; i < LAYER_CNT; ++i) {
-            if (i == 0) {
-                layers[0]->forward(input, (*tmp)[0]);
-            } else {
-                layers[i]->forward((*tmp)[i - 1], (*tmp)[i]);
+    template<typename T, int DIM, int DEP, int DIM_HID, int HEAD_SIZE, int LAYER_CNT>
+    class Encoder {
+    public:
+        static void forward(std::array<std::array<T, DIM>, DEP> &input,
+                            std::array<std::array<T, DIM>, DEP> &output,
+                            EncoderParameter<T, DIM, DIM_HID, HEAD_SIZE, LAYER_CNT> &p) {
+            auto tmp = std::array<std::array<std::array<T, DIM>, DEP>, LAYER_CNT>{};
+            for (int i = 0; i < LAYER_CNT; ++i) {
+                if (i == 0) {
+                    EncoderLayer<T, DIM, DEP, DIM_HID, HEAD_SIZE>::forward(input, tmp[0], p.layers_p[i]);
+                } else {
+                    EncoderLayer<T, DIM, DEP, DIM_HID, HEAD_SIZE>::forward(tmp[i - 1], tmp[i], p.layers_p[i]);
+                }
+            }
+            for (int i = 0; i < DEP; ++i) {
+                LayerNorm<T, DIM>::forward(tmp[LAYER_CNT - 1][i], output[i], p.norm_p);
             }
         }
-        for (int i = 0; i < DEP; ++i) {
-            norm->forward((*tmp)[i - 1][i], output[i]);
-        }
-        delete tmp;
-    }
-
-private:
-    EncoderLayer<T, DIM, DEP, D_H, HEAD_SIZE> *layers[LAYER_CNT];
-    LayerNorm<T, DIM> *norm;
-};
-
-#endif
+    };
+}
+#endif //TRANSFORMER_ENCODER_H
