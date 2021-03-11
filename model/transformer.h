@@ -1,43 +1,35 @@
-#ifndef __MODEL_TRANSFORMER_H__
-#define __MODEL_TRANSFORMER_H__
+//
+// Created by dianhsu on 2021/03/11.
+//
 
+#ifndef TRANSFORMER_TRANSFORMER_H
+#define TRANSFORMER_TRANSFORMER_H
+
+#include <array>
 #include "encoder.h"
 #include "decoder.h"
 
+namespace transformer {
+    template<typename T, int DIM, int DIM_HID, int HEAD_SIZE, int ENC_LAYER_CNT, int DEC_LAYER_CNT>
+    struct TransformerParameter {
+        EncoderParameter<T, DIM, DIM_HID, HEAD_SIZE, ENC_LAYER_CNT> encoder_p;
+        DecoderParameter<T, DIM, DIM_HID, HEAD_SIZE, DEC_LAYER_CNT> decoder_p;
 
-template<typename T, int DIM, int D_H, int HEAD_SIZE, int ENC_LAYER_CNT, int DEC_LAYER_CNT>
-struct TransformerParam {
-    EncoderParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT> encoder_p;
-    DecoderParam<T, DIM, D_H, HEAD_SIZE, DEC_LAYER_CNT> decoder_p;
+        long long count() {
+            return encoder_p.count() + decoder_p.count();
+        }
+    };
 
-    long long count() {
-        return encoder_p.count() + decoder_p.count();
-    }
-};
-
-template<typename T, int DIM, int DEP, int D_H, int HEAD_SIZE, int ENC_LAYER_CNT, int DEC_LAYER_CNT>
-class Transformer {
-public:
-    explicit Transformer(TransformerParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT> &p) {
-        encoder = new Encoder<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT>(p.encoder_p);
-        decoder = new Decoder<T, DIM, DEP, D_H, HEAD_SIZE, DEC_LAYER_CNT>(p.decoder_p);
-    }
-
-    ~Transformer() {
-        delete encoder;
-        delete decoder;
-    }
-
-
-    void forward(const array<array<T, DIM>, DEP> input, array<array<T, DIM>, DEP> &output) {
-        auto tmp = array<array<T, DIM>, DEP>{};
-        encoder->forward(input, tmp);
-        decoder->forward(tmp, tmp, output);
-    }
-
-private:
-    Encoder<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT> *encoder;
-    Decoder<T, DIM, DEP, D_H, HEAD_SIZE, DEC_LAYER_CNT> *decoder;
-};
-
-#endif
+    template<typename T, int DIM, int DEP, int DIM_HID, int HEAD_SIZE, int ENC_LAYER_CNT, int DEC_LAYER_CNT>
+    class Transformer {
+    public:
+        static void forward(std::array<std::array<T, DIM>, DEP> &input,
+                            std::array<std::array<T, DIM>, DEP> &output,
+                            TransformerParameter<T, DIM, DIM_HID, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT> &p) {
+            auto tmp = std::array<std::array<T, DIM>, DEP>{};
+            Encoder<T, DIM, DEP, DIM_HID, HEAD_SIZE, ENC_LAYER_CNT>::forward(input, tmp, p.encoder_p);
+            Decoder<T, DIM, DEP, DIM_HID, HEAD_SIZE, DEC_LAYER_CNT>::forward(tmp, tmp, output, p.decoder_p);
+        }
+    };
+}
+#endif //TRANSFORMER_TRANSFORMER_H
