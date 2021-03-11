@@ -2,3 +2,4 @@ build/
 output/
 cmake-build-debug/
 .idea/
+cmake-build-debug-mingw/

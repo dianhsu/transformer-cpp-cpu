@@ -1,25 +1,28 @@
-
+#include <bits/stdc++.h>
 #include "transformer.h"
-#include <iostream>
 
 typedef float T;
-const int DEP = 5;
-const int DIM = 32;
-const int D_H = 32;
-const int HEAD_SIZE = 2;
-const int ENC_LAYER_CNT = 1;
-const int DEC_LAYER_CNT = 1;
+#define DIM 16
+#define DEP 20
+#define DIM_HID 32
+#define HEAD_SIZE 8
+#define ENC_LAYER_CNT 6
+#define DEC_LAYER_CNT 6
+
 
 int main() {
+    auto *param = new transformer::TransformerParameter<T, DIM, DIM_HID, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT>();
+    std::cout << "parameters count: " << param->count() << std::endl;
+    auto *input = new std::array<std::array<T, DIM>, DEP>{};
+    auto *output = new std::array<std::array<T, DIM>, DEP>{};
+    transformer::Transformer<T, DIM, DEP, DIM_HID, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT>::forward(*input, *output,
+                                                                                                     *param);
+    for (int i = 0; i < DEP; ++i) {
+        for (int j = 0; j < DIM; ++j) {
+            std::cout << (*output)[i][j] << " ";
+        }
+        std::cout << std::endl;
 
-    auto *p_tran = new TransformerParam<T, DIM, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT>();
-    auto *transformer = new Transformer<T, DIM, DEP, D_H, HEAD_SIZE, ENC_LAYER_CNT, DEC_LAYER_CNT>(*p_tran);
-    auto *input = new array<array<T, DIM>, DEP>{};
-    auto *output = new array<array<T, DIM>, DEP>{};
-    transformer->forward(*input, *output);
-    delete output;
-    delete input;
-    delete transformer;
-    delete p_tran;
+    }
     return 0;
 }

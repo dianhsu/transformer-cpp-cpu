@@ -1,27 +1,25 @@
-#ifndef __MODEL_RELU_H__
-#define __MODEL_RELU_H__
+//
+// Created by dianhsu on 2021/03/10.
+//
 
-template<typename T, int DIM>
-class Relu {
-public:
-    void forward(const array<T, DIM> input, array<T, DIM> &output) {
-        for (int i = 0; i < DIM; ++i) {
-            if (input[i] < 0) {
-                output[i] = 0;
-            } else {
-                output[i] = input[i];
+#ifndef TRANSFORMER_RELU_H
+#define TRANSFORMER_RELU_H
+
+#include <array>
+
+namespace transformer {
+    template<typename T, int DIM>
+    class Relu {
+    public:
+        static void forward(std::array<T, DIM> &input, std::array<T, DIM> &output) {
+            for (int i = 0; i < DIM; ++i) {
+                if (input[i] < 0) {
+                    output[i] = 0;
+                } else {
+                    output[i] = input[i];
+                }
             }
         }
-    }
-
-    void forward(array<T, DIM> &input) {
-        for (int i = 0; i < DIM; ++i) {
-            if (input[i] < 0) {
-                input[i] = 0;
-            }
-        }
-    }
-
-};
-
-#endif
+    };
+}
+#endif //TRANSFORMER_RELU_H
